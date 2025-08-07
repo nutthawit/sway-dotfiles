@@ -53,7 +53,6 @@ alias gc=git-crypt
 alias gg=lazygit
 
 # Shell aliases
-alias vi=hx
 alias la='ls -a'
 alias ll='ls -l'
 alias lla='ls -la'
