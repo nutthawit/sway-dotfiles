@@ -5,7 +5,7 @@
 Paste global-bashrc file in /etc/bashrc
 ```bash
 sudo mv /etc/bashrc /etc/bashrc.orig
-sudo cp ~/.sway-dotifles/global-bashrc /etc/bashrc
+sudo cp ~/.sway-dotfiles/global-bashrc /etc/bashrc
 ```
 
 Enable rpmfusion
@@ -36,7 +36,7 @@ stow -v dropbox
 systemctl --user enable --now dropbox
 ```
 
-> If already 3 devices connected, you can't connect more devices, you must clear some device via the browser and the restart the dropbox.service.
+> If you have already 3 devices connected, you can't connect more devices, you must clear some device via the browser and the restart the dropbox.service.
 
 Backup user bashrc
 ```bash
