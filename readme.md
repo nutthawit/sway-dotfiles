@@ -15,7 +15,7 @@ sudo dnf install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-releas
 
 Install utility packages 
 ```bash
-sudo dnf install -y git keepassxc stow wdisplays @c-development cmake
+sudo dnf install -y btop git keepassxc stow wdisplays @c-development cmake
 sudo dnf copr enable atim/lazygit -y
 sudo dnf install -y lazygit
 ```
@@ -95,18 +95,20 @@ btrfs-assistant \
 inotify-tools
 ```
 
-## Install startship, zoxide, alacritty, bat
+> How to create snapshot [see](https://sysguides.com/install-fedora-42-with-snapshot-and-rollback-support#3-postinstallation-configuration).
+
+## Setup my development environment
+
+Install fzf
+```bash
+git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+~/.fzf/install --key-bindings --completion --no-update-rc
+```
 
 Build alacritty
 ```bash
 sudo dnf install -y fontconfig-devel
 cargo install alacritty --quiet --locked
-stow alacritty
-
-sed -i 's/set \$term foot/set \$term alacritty/' ~/.config/sway/config
-
-# restart sway by press key
-# super+shift+c
 ```
 
 Build bat
@@ -115,13 +117,9 @@ sudo dnf install -y oniguruma-devel
 RUSTONIG_SYSTEM_LIBONIG=1 cargo install bat --locked --quiet
 ```
 
-Build startship and zoxide
+Build startship
 ```bash
 cargo install starship --quiet --locked
-echo "" > ~/.bashrc
-echo "eval "$(starship init bash)" > ~/.bashrc
-
-source ~/.bashrc
 ```
 
 Build zoxide
@@ -132,26 +130,20 @@ cargo install zoxide --quiet --locked
 sudo sed -i '/eval "$(zoxide init bash)"/s/^# *//' /etc/bashrc
 ```
 
-
-## Install fzf
+Activate
 ```bash
-git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
-~/.fzf/install --key-bindings --completion
-
+mv ~/.gitconfig ~/.gitconfig.orig
+stow -v --override=.bashrc --override=~/.config/sway/config dev-env
+source /etc/bashrc
 source ~/.bashrc
-```
 
-## Install helix and rust-analysis
+# restart sway by press key
+# super+shift+c
+```
 
 ## Todo
 
-- Setup snapper and test snapshot and restore (not pass)
 - Set tlp for manage battery life
-- Install fzf (pass)
-- Install cargo and sccache
-- Setup dotfile
-  - /etc/bashrc
-  - ~/.config/sway/config
-  - ~/.config/foot/foot.ini
+
 
 
