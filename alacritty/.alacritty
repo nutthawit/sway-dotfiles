@@ -1,0 +1,5 @@
+[terminal]
+shell = { program = "/bin/bash" }
+
+[cursor] 
+style = { shape = "Block", blinking = "On" }

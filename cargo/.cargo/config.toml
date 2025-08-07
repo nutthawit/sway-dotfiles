@@ -1,0 +1,6 @@
+[target.'cfg(target_os = "linux")']
+# linker = "clang"
+rustflags = ["-C", "link-arg=-fuse-ld=mold"]
+
+[build]
+rustc-wrapper = "/home/tie/.cargo/bin/sccache"

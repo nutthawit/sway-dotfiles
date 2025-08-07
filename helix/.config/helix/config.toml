@@ -1,0 +1,37 @@
+theme = "github_dark"
+
+[editor]
+line-number = "relative"
+
+# [editor.lsp]
+# enable = true
+
+# [editor.auto-save]
+# focus-lost = true
+
+# [editor.file-picker]
+# hidden = false
+
+[editor.soft-wrap]
+enable = true
+max-wrap = 25
+wrap-indicator = ""
+
+[editor.file-picker]
+hidden = false
+
+[editor.whitespace]
+render = "all"
+
+[editor.whitespace.characters]
+space = "·"
+nbsp = "⍽"
+nnbsp = "␣"
+tab = "→"
+newline = "⏎"
+tabpad = "→" # Tabs will look like "→···" (depending on tab width)
+
+[editor.indent-guides]
+render = true
+character = "╎" # Some characters that work well: "▏", "┆", "┊", "⸽"
+skip-levels = 1

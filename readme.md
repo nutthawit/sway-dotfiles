@@ -1,0 +1,157 @@
+# Sway dotfile
+
+## Prerequisite
+
+Paste global-bashrc file in /etc/bashrc
+```bash
+sudo mv /etc/bashrc /etc/bashrc.orig
+sudo cp ~/.sway-dotifles/global-bashrc /etc/bashrc
+```
+
+Enable rpmfusion
+```bash
+sudo dnf install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
+```
+
+Install utility packages 
+```bash
+sudo dnf install -y git keepassxc stow wdisplays @c-development cmake
+sudo dnf copr enable atim/lazygit -y
+sudo dnf install -y lazygit
+```
+
+> `wdisplays` allow precise adjustment of display settings via gui, and you can copy these settings to `~/.config/sway/config` for permanent.
+
+Paste default config for *foot* and *sway*
+```bash
+stow -v default
+```
+
+Install dropbox
+```bash
+wget https://www.dropbox.com/download?plat=lnx.x86_64 -O /tmp/dropbox.tar.gz
+tar -xf /tmp/dropbox.tar.gz -C $HOME
+
+stow -v dropbox
+systemctl --user enable --now dropbox
+```
+
+> If already 3 devices connected, you can't connect more devices, you must clear some device via the browser and the restart the dropbox.service.
+
+Backup user bashrc
+```bash
+mv ~/.bashrc ~/.bashrc.orig
+```
+
+Install cargo 
+```bash
+sudo dnf install -y mold
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh --profile default --no-modify-path -y
+
+stow -v cargo
+source ~/.bashrc
+```
+
+> `mold` is a faster drop-in replacement for existing Unix linkers, use to tell cargo to use did linker to build other rust crates.
+
+Build sccache
+```bash
+sudo dnf install -y openssl-devel openssl
+RUSTC_WRAPPER= cargo install sccache --locked --quiet
+```
+
+Build helix
+```bash
+sudo dnf install -y lldb
+git clone https://github.com/helix-editor/helix ~/helix
+mkdir -p ~/.config/helix/runtime
+export HELIX_RUNTIME=~/.config/helix/runtime
+cargo install --path ~/helix/helix-term --locked --quiet
+mv -v ~/helix/runtime/* ~/.config/helix/runtime/
+```
+
+Set language server for rust
+```bash
+rustup component add rust-analyzer
+
+sudo sed -i 's/EDITOR="vi"/EDITOR="hx"/' /etc/bashrc
+sudo sed -i '/EDITOR="hx"/a export HELIX_RUNTIME="~/.config/helix/runtime"' /etc/bashrc
+source /etc/bashrc
+
+stow -v --override=.bashrc helix
+source ~/.bashrc
+```
+
+> verify by `hx --health rust`
+
+## Install required packages for snapper
+
+```bash
+sudo dnf install -y \
+snapper \
+ps_mem \
+libdnf5-plugin-actions \
+btrfs-assistant \
+inotify-tools
+```
+
+## Install startship, zoxide, alacritty, bat
+
+Build alacritty
+```bash
+sudo dnf install -y fontconfig-devel
+cargo install alacritty --quiet --locked
+stow alacritty
+
+sed -i 's/set \$term foot/set \$term alacritty/' ~/.config/sway/config
+
+# restart sway by press key
+# super+shift+c
+```
+
+Build bat
+```bash
+sudo dnf install -y oniguruma-devel
+RUSTONIG_SYSTEM_LIBONIG=1 cargo install bat --locked --quiet
+```
+
+Build startship and zoxide
+```bash
+cargo install starship --quiet --locked
+echo "" > ~/.bashrc
+echo "eval "$(starship init bash)" > ~/.bashrc
+
+source ~/.bashrc
+```
+
+Build zoxide
+```bash
+cargo install zoxide --quiet --locked
+
+# uncomment line to enable zoxide
+sudo sed -i '/eval "$(zoxide init bash)"/s/^# *//' /etc/bashrc
+```
+
+
+## Install fzf
+```bash
+git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+~/.fzf/install --key-bindings --completion
+
+source ~/.bashrc
+```
+
+## Install helix and rust-analysis
+
+## Todo
+
+- Setup snapper and test snapshot and restore (not pass)
+- Set tlp for manage battery life
+- Install fzf (pass)
+- Install cargo and sccache
+- Setup dotfile
+  - /etc/bashrc
+  - ~/.config/sway/config
+  - ~/.config/foot/foot.ini
+
+
