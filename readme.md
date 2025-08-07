@@ -25,6 +25,11 @@ sudo dnf install -y lazygit
 Paste default config for *foot* and *sway*
 ```bash
 stow -v default
+
+# restart sway by press key
+# super+shift+c
+
+# reopen terminal
 ```
 
 Install dropbox
@@ -46,7 +51,7 @@ mv ~/.bashrc ~/.bashrc.orig
 Install cargo 
 ```bash
 sudo dnf install -y mold
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh --profile default --no-modify-path -y
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --profile default --no-modify-path -y
 
 stow -v cargo
 source ~/.bashrc
