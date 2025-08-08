@@ -55,6 +55,11 @@ Backup user bashrc
 mv ~/.bashrc ~/.bashrc.orig
 ```
 
+Create .cargo dir
+```bash
+mkdir ~/.cargo
+```
+
 Install cargo 
 ```bash
 sudo dnf install -y mold
