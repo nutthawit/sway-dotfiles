@@ -34,6 +34,11 @@ stow -v default
 # reopen terminal
 ```
 
+Create user systemd dir
+```bash
+mkdir -p ~/.config/systemd/user
+```
+
 Install dropbox
 ```bash
 wget https://www.dropbox.com/download?plat=lnx.x86_64 -O /tmp/dropbox.tar.gz
