@@ -1,0 +1,9 @@
+#!/bin/bash
+
+base_url=$1
+total_songs=$(($2))
+
+for ((i=1; i<=total_songs; i++)); do
+  url="$base_url&index=$i"
+  yt-dlp -x --audio-format mp3 $url
+done
