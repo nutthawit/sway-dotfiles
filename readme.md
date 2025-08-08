@@ -6,6 +6,8 @@ Paste global-bashrc file in /etc/bashrc
 ```bash
 sudo mv /etc/bashrc /etc/bashrc.orig
 sudo cp ~/.sway-dotfiles/global-bashrc /etc/bashrc
+
+source /etc/bashrc
 ```
 
 Enable rpmfusion
@@ -138,7 +140,7 @@ sudo sed -i '/eval "$(zoxide init bash)"/s/^# *//' /etc/bashrc
 Activate
 ```bash
 mv ~/.gitconfig ~/.gitconfig.orig
-stow -v --override=.bashrc --override=.config/sway/config dev-env
+stow -v --override=.bashrc --override=.config/sway/config kdtie
 source /etc/bashrc
 source ~/.bashrc
 
