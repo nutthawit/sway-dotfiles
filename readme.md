@@ -138,7 +138,7 @@ sudo sed -i '/eval "$(zoxide init bash)"/s/^# *//' /etc/bashrc
 Activate
 ```bash
 mv ~/.gitconfig ~/.gitconfig.orig
-stow -v --override=.bashrc --override=~/.config/sway/config dev-env
+stow -v --override=.bashrc --override=.config/sway/config dev-env
 source /etc/bashrc
 source ~/.bashrc
 
