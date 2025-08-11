@@ -17,7 +17,7 @@ sudo dnf install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-releas
 
 Install utility packages 
 ```bash
-sudo dnf install -y btop git keepassxc stow wdisplays @c-development cmake
+sudo dnf install -y android-file-transfer btop git keepassxc stow wdisplays @c-development cmake
 sudo dnf copr enable atim/lazygit -y
 sudo dnf install -y lazygit
 ```
@@ -160,7 +160,4 @@ source ~/.bashrc
 
 ## Todo
 
-- Set tlp for manage battery life
-
-
-
+- Add /etc/tlp.conf to *default* dir after setting is finished.
