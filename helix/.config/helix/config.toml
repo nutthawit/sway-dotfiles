@@ -3,8 +3,8 @@ theme = "solarized_dark"
 [editor]
 line-number = "relative"
 
-# [editor.lsp]
-# enable = true
+[editor.lsp]
+display-inlay-hints = true
 
 # [editor.auto-save]
 # focus-lost = true
