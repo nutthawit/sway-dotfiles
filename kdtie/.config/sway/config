@@ -198,6 +198,9 @@ input "type:touchpad" {
 
     # Move focus to the parent container
     bindsym $mod+a focus parent
+
+    # Move focus to the child container
+    bindsym $mod+escape focus child
 #
 # Scratchpad:
 #
@@ -234,6 +237,9 @@ mode "resize" {
     bindsym Escape mode "default"
 }
 bindsym $mod+r mode "resize"
+
+# Suspend key
+bindsym $mod+Shift+s exec systemctl suspend
 
 # Making the cursor move to the focused window 
 mouse_warping container
