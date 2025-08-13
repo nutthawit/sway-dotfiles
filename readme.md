@@ -17,7 +17,7 @@ sudo dnf install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-releas
 
 Install utility packages 
 ```bash
-sudo dnf install -y android-file-transfer btop git keepassxc stow wdisplays @c-development cmake
+sudo dnf install -y android-file-transfer btop git keepassxc stow wdisplays @c-development cmake just
 sudo dnf copr enable atim/lazygit -y
 sudo dnf install -y lazygit
 ```
@@ -126,6 +126,8 @@ Build alacritty
 ```bash
 sudo dnf install -y fontconfig-devel
 cargo install alacritty --quiet --locked
+mkdir -p ~/.config/alacritty/themes
+git clone https://github.com/alacritty/alacritty-theme ~/.config/alacritty/themes
 ```
 
 Build bat
@@ -156,6 +158,12 @@ source ~/.bashrc
 
 # restart sway by press key
 # super+shift+c
+```
+
+## Install required packages for build cosmic-epoch
+
+```bash
+sudo dnf install -y libxkbcommon-devel systemd-devel dbus-devel pkgconf-pkg-config libinput-devel libseat-devel libdisplay-info-devel mesa-libgbm-devel clang llvm-devel pam-devel gstreamer1-devel gstreamer1-plugins-base-devel pipewire-devel flatpak-devel
 ```
 
 ## Todo

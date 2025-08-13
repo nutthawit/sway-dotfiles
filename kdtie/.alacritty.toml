@@ -1,5 +1,12 @@
+[general]
+import = [
+  "~/.config/alacritty/themes/themes/solarized_light.toml"
+]
+
 [terminal]
 shell = { program = "/bin/bash" }
 
 [cursor] 
 style = { shape = "Block", blinking = "On" }
+
+
