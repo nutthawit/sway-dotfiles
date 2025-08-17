@@ -15,6 +15,15 @@ Enable rpmfusion
 sudo dnf install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
 ```
 
+Install tlp for manage battery
+```bash
+sudo dnf install tlp tlp-rdw -y
+
+sudo cp tlp.conf /etc/tlp.conf
+sudo systemctl enable tlp.service
+sudo systemctl mask systemd-rfkill.service systemd-rfkill.socket
+```
+
 Install utility packages 
 ```bash
 sudo dnf install -y android-file-transfer btop git keepassxc stow wdisplays @c-development cmake just
@@ -163,8 +172,10 @@ source ~/.bashrc
 ## Install required packages for build cosmic-epoch
 
 ```bash
-sudo dnf install -y libxkbcommon-devel systemd-devel dbus-devel pkgconf-pkg-config libinput-devel libseat-devel libdisplay-info-devel mesa-libgbm-devel clang llvm-devel pam-devel gstreamer1-devel gstreamer1-plugins-base-devel pipewire-devel flatpak-devel
+sudo dnf install -y libxkbcommon-devel systemd-devel dbus-devel pkgconf-pkg-config libinput-devel libseat-devel libdisplay-info-devel mesa-libgbm-devel clang llvm-devel pam-devel gstreamer1-devel gstreamer1-plugins-base-devel pipewire-devel flatpak-devel greetd
 ```
+
+> `greetd` is required when you need to run `just --no-deps install` to install on /usr/local, not just systemd-sysext
 
 ## Todo
 
