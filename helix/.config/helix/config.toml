@@ -1,11 +1,12 @@
-# theme = "solarized_dark"
-theme = "solarized_light"
+theme = "solarized_dark"
+# theme = "solarized_light"
 
 [editor]
 line-number = "relative"
 
 [editor.lsp]
 display-inlay-hints = true
+goto-reference-include-declaration = true
 
 # [editor.auto-save]
 # focus-lost = true
