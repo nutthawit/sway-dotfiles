@@ -11,3 +11,7 @@
 [user]
 	name = kdtie
 	email = nutthawit1513@gmail.com
+[pull]
+	rebase = true
+[submodule]
+	recurse = true
