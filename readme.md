@@ -172,11 +172,11 @@ source ~/.bashrc
 ## Install required packages for build cosmic-epoch
 
 ```bash
-sudo dnf install -y libxkbcommon-devel systemd-devel dbus-devel pkgconf-pkg-config libinput-devel libseat-devel libdisplay-info-devel mesa-libgbm-devel clang llvm-devel pam-devel gstreamer1-devel gstreamer1-plugins-base-devel pipewire-devel flatpak-devel greetd
+sudo dnf install -y libxkbcommon-devel systemd-devel dbus-devel pkgconf-pkg-config libinput-devel libseat-devel libdisplay-info-devel mesa-libgbm-devel clang llvm-devel pam-devel gstreamer1-devel gstreamer1-plugins-base-devel pipewire-devel flatpak-devel greetd power-profiles-daemon
 ```
 
 > `greetd` is required when you need to run `just --no-deps install` to install on /usr/local, not just systemd-sysext
+> `power-profiles-daemon`  is a Linux service that manages system power profiles, allowing users to switch between different power modes (e.g., Power Saver, Balanced, and Performance) to optimize battery life or performance. It is commonly used in GNOME-based systems (like Fedora, Ubuntu, and other distributions) as an alternative to older solutions like `tlp` or `cpufreqd`.
 
 ## Todo
 
-- Add /etc/tlp.conf to *default* dir after setting is finished.
