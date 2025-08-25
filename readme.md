@@ -15,14 +15,14 @@ Enable rpmfusion
 sudo dnf install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
 ```
 
-Install tlp for manage battery
-```bash
-sudo dnf install tlp tlp-rdw -y
+<!-- Install tlp for manage battery -->
+<!-- ```bash -->
+<!-- sudo dnf install tlp tlp-rdw -y -->
 
-sudo cp tlp.conf /etc/tlp.conf
-sudo systemctl enable tlp.service
-sudo systemctl mask systemd-rfkill.service systemd-rfkill.socket
-```
+<!-- sudo cp tlp.conf /etc/tlp.conf -->
+<!-- sudo systemctl enable tlp.service -->
+<!-- sudo systemctl mask systemd-rfkill.service systemd-rfkill.socket -->
+<!-- ``` -->
 
 Install utility packages 
 ```bash
@@ -119,6 +119,7 @@ ps_mem \
 libdnf5-plugin-actions \
 btrfs-assistant \
 inotify-tools
+sudo dnf copr enable peoinas/snap-sync && sudo dnf install snap-sync -y
 ```
 
 > How to create snapshot [see](https://sysguides.com/install-fedora-42-with-snapshot-and-rollback-support#3-postinstallation-configuration).
@@ -177,6 +178,23 @@ sudo dnf install -y libxkbcommon-devel systemd-devel dbus-devel pkgconf-pkg-conf
 
 > `greetd` is required when you need to run `just --no-deps install` to install on /usr/local, not just systemd-sysext
 > `power-profiles-daemon`  is a Linux service that manages system power profiles, allowing users to switch between different power modes (e.g., Power Saver, Balanced, and Performance) to optimize battery life or performance. It is commonly used in GNOME-based systems (like Fedora, Ubuntu, and other distributions) as an alternative to older solutions like `tlp` or `cpufreqd`.
+
+## Post install cosmic-epoch
+
+1. Fix authentication failure" when locking screen. [Readmore]("https://github.com/pop-os/cosmic-greeter/issues/126") [Solution]("https://github.com/pop-os/cosmic-greeter/issues/126#issuecomment-2351331240")
+
+```bash
+cd /etc/pam.d
+sudo ln -s greetd cosmic-greeter
+```
+
+2. Apply my cosmic style.
+
+```bash
+mv ~/.config/cosmic ~/.config/cosmic.orig
+git clone git@github.com:nutthawit/solarized-cosmic-setup.git ~/.config/cosmic
+pkill cosmic-session
+```
 
 ## Todo
 
