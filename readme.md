@@ -15,6 +15,7 @@ Enable rpmfusion
 sudo dnf install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
 ```
 
+<!-- Optional for swayWM -->
 <!-- Install tlp for manage battery -->
 <!-- ```bash -->
 <!-- sudo dnf install tlp tlp-rdw -y -->
@@ -26,16 +27,20 @@ sudo dnf install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-releas
 
 Install utility packages 
 ```bash
-sudo dnf install -y android-file-transfer btop git keepassxc stow wdisplays @c-development cmake just
+sudo dnf install -y android-file-transfer btop git keepassxc stow @c-development cmake just
 sudo dnf copr enable atim/lazygit -y
 sudo dnf install -y lazygit
+
+# Optional for swayWM
+# sudo dnf install wdisplays -y
 ```
 
 > `wdisplays` allow precise adjustment of display settings via gui, and you can copy these settings to `~/.config/sway/config` for permanent.
 
 Paste default config for *foot* and *sway*
 ```bash
-stow -v default
+# Optional for swayWM
+# stow -v default
 
 # restart sway by press key
 # super+shift+c
