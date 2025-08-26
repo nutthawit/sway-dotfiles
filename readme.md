@@ -59,7 +59,7 @@ mount
 # lsblk
 ```
 
-Setup Snapper
+Setup Snapper [ref](https://sysguides.com/install-fedora-42-with-snapshot-and-rollback-support#3-postinstallation-configuration).
 ```bash
 # install necessary packages
 sudo dnf dnf install snapper libdnf5-plugin-actions inotify-tools
@@ -173,8 +173,6 @@ sudo mv /etc/bashrc /etc/bashrc.orig
 sudo cp ~/.sway-dotfiles/global-bashrc /etc/bashrc
 
 source /etc/bashrc
-
-
 ```
 
 Enable rpmfusion
@@ -273,21 +271,10 @@ source /etc/bashrc
 
 stow -v --override=.bashrc helix
 source ~/.bashrc
+
+# verify by
+# hx --health rust
 ```
-
-> verify by `hx --health rust`
-
-## Install required packages for snapper
-
-```bash
-sudo dnf install -y snapper ps_mem libdnf5-plugin-actions inotify-tools
-# sudo dnf copr enable peoinas/snap-sync && sudo dnf install snap-sync -y
-
-# Optional btrfs-assistant of GUI manage btrfs (not work on cosmic-desktop)
-dnf install btrfs-assistant -y
-```
-
-> How to create snapshot [see](https://sysguides.com/install-fedora-42-with-snapshot-and-rollback-support#3-postinstallation-configuration).
 
 ## Setup my development environment
 
@@ -335,10 +322,24 @@ source ~/.bashrc
 # super+shift+c
 ```
 
-## Install required packages for build cosmic-epoch
+## Install required packages and build cosmic-epoch
 
 ```bash
+# install dependencies
 sudo dnf install -y libxkbcommon-devel systemd-devel dbus-devel pkgconf-pkg-config libinput-devel libseat-devel libdisplay-info-devel mesa-libgbm-devel clang llvm-devel pam-devel gstreamer1-devel gstreamer1-plugins-base-devel pipewire-devel flatpak-devel greetd power-profiles-daemon
+
+# clone setting
+git clone git@github.com:nutthawit/solarized-cosmic-setup.git ~/.config/cosmic
+
+# build
+git clone --recurse-submodules https://github.com/pop-os/cosmic-epoch ~/cosmic-epoch
+cd ~/cosmic-epoch
+just build
+
+# install to /usr
+sed -i 's|install rootdir="" prefix="/usr/local": build|install rootdir="" prefix="/usr": build|' justfile
+sudo just install
+cd ~
 ```
 
 > `greetd` is required when you need to run `just --no-deps install` to install on /usr/local, not just systemd-sysext
@@ -359,6 +360,12 @@ sudo ln -s greetd cosmic-greeter
 mv ~/.config/cosmic ~/.config/cosmic.orig
 git clone git@github.com:nutthawit/solarized-cosmic-setup.git ~/.config/cosmic
 pkill cosmic-session
+```
+
+## Clone my development repo
+```bash
+git clone https://github.com/pop-os/libcosmic ~/libcosmic
+git clone git@github.com:nutthawit/rust-note.git ~/rust-note
 ```
 
 ## Todo
