@@ -10,8 +10,8 @@ set -e # Exit on any error
 ########################################
 
 # Default mount points
-BACKUP_MOUNT="/mnt/backup"
-SNAPSHOT_MOUNT="/mnt/backup_snapshot"
+BACKUP_MOUNT="/mnt/external_snapper_backup"
+SNAPSHOT_MOUNT="/mnt/old_snapshots"
 
 # Default Snapper configs to check if none specified
 DEFAULT_CONFIGS=("root" "home")
