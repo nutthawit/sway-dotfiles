@@ -205,7 +205,7 @@ interactive_restore() {
     done
 
     # Prompt user to choose a config and snapshot
-    read -rp "Enter the Snapper config name to restore from (e.g., home_Downloads): " chosen_config
+    read -rp "Enter the Snapper config name to restore from (e.g., home_Documents): " chosen_config
     
     if [[ ! " ${SNAPPER_CONFIGS[@]} " =~ " ${chosen_config} " ]]; then
         echo "Error: Config '$chosen_config' is not in the available list."
