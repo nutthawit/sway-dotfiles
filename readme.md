@@ -97,13 +97,21 @@ sudo snapper -c home_Pictures create-config /home/tie/Pictures
 sudo snapper -c home_Pictures set-config ALLOW_USERS=$USER SYNC_ACL=yes
 sudo snapper -c home_Pictures set-config TIMELINE_CREATE=no
 
-sudo snapper -c home_mozilla create-config /home/tie/.mozilla
-sudo snapper -c home_mozilla set-config ALLOW_USERS=$USER SYNC_ACL=yes
-sudo snapper -c home_mozilla set-config TIMELINE_CREATE=no
+sudo snapper -c home_Documents create-config /home/tie/Documents
+sudo snapper -c home_Documents set-config ALLOW_USERS=$USER SYNC_ACL=yes
+sudo snapper -c home_Documents set-config TIMELINE_CREATE=no
 
-sudo snapper -c home_mozilla create-config /home/tie/.mozilla
-sudo snapper -c home_mozilla set-config ALLOW_USERS=$USER SYNC_ACL=yes
-sudo snapper -c home_mozilla set-config TIMELINE_CREATE=no
+sudo snapper -c home_Downloads create-config /home/tie/Downloads
+sudo snapper -c home_Downloads set-config ALLOW_USERS=$USER SYNC_ACL=yes
+sudo snapper -c home_Downloads set-config TIMELINE_CREATE=no
+
+sudo snapper -c home_Musics create-config /home/tie/Musics
+sudo snapper -c home_Musics set-config ALLOW_USERS=$USER SYNC_ACL=yes
+sudo snapper -c home_Musics set-config TIMELINE_CREATE=no
+
+sudo snapper -c home_Videos create-config /home/tie/Videos
+sudo snapper -c home_Videos set-config ALLOW_USERS=$USER SYNC_ACL=yes
+sudo snapper -c home_Videos set-config TIMELINE_CREATE=no
 ```
 
 Allow grub to detect and list snapshots in the boot menu
