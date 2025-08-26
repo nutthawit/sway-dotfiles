@@ -334,6 +334,7 @@ git clone git@github.com:nutthawit/solarized-cosmic-setup.git ~/.config/cosmic
 # build
 git clone --recurse-submodules https://github.com/pop-os/cosmic-epoch ~/cosmic-epoch
 cd ~/cosmic-epoch
+sudo ln -s /usr/lib64/libclang.so.20.1 /usr/lib64/libclang.so
 just build
 
 # install to /usr
