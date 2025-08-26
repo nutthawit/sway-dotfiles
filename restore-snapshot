@@ -1,0 +1,268 @@
+#!/bin/bash
+
+# snapper-restore.sh - Restore files from multiple Snapper config backups on USB
+# Usage: sudo ./snapper-restore.sh --uuid <USB_UUID> --snapper-configs <config1> <config2> ...
+
+set -e # Exit on any error
+
+########################################
+# CONFIGURATION - DEFAULTS             #
+########################################
+
+# Default mount points
+BACKUP_MOUNT="/mnt/backup"
+SNAPSHOT_MOUNT="/mnt/backup_snapshot"
+
+# Default Snapper configs to check if none specified
+DEFAULT_CONFIGS=("root" "home")
+
+########################################
+# FUNCTIONS                            #
+########################################
+
+show_help() {
+    echo "Usage: $0 [OPTIONS]"
+    echo "Restore files from multiple Snapper config backups on USB drive."
+    echo ""
+    echo "Options:"
+    echo "  -u, --uuid UUID            UUID of the backup USB drive (required)"
+    echo "  -s, --snapper-configs CONFIGS"
+    echo "                             Space-separated list of Snapper configs to restore"
+    echo "                             (e.g., home_Downloads home_Pictures home_Music)"
+    echo "  -l, --list                 List available snapshots for configs and exit"
+    echo "  -u, --unmount              Unmount the backup drive and exit"
+    echo "  -h, --help                 Show this help message and exit"
+    echo ""
+    echo "Examples:"
+    echo "  $0 --uuid 1234abcd-5678-ef90-... --snapper-configs home_Downloads home_Pictures"
+    echo "  $0 --uuid 1234abcd-5678-ef90-... --snapper-configs home_Downloads --list"
+    echo "  $0 --uuid 1234abcd-5678-ef90-... --unmount"
+}
+
+check_root() {
+    if [[ $EUID -ne 0 ]]; then
+        echo "Error: This script must be run as root (use sudo)." 
+        exit 1
+    fi
+}
+
+parse_arguments() {
+    local positional_params=()
+    
+    SNAPPER_CONFIGS=()
+    ACTION="interactive"
+    BACKUP_DISK_UUID=""
+    
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            -u|--uuid)
+                BACKUP_DISK_UUID="$2"
+                shift 2
+                ;;
+            -s|--snapper-configs)
+                shift
+                # Collect all following arguments until next option
+                while [[ $# -gt 0 ]] && [[ ! "$1" =~ ^- ]]; do
+                    SNAPPER_CONFIGS+=("$1")
+                    shift
+                done
+                ;;
+            -l|--list)
+                ACTION="list"
+                shift
+                ;;
+            --unmount)
+                ACTION="unmount"
+                shift
+                ;;
+            -h|--help)
+                show_help
+                exit 0
+                ;;
+            -*|--*)
+                echo "Error: Unknown option $1"
+                show_help
+                exit 1
+                ;;
+            *)
+                positional_params+=("$1")
+                shift
+                ;;
+        esac
+    done
+    
+    # Set default configs if none specified
+    if [ ${#SNAPPER_CONFIGS[@]} -eq 0 ]; then
+        SNAPPER_CONFIGS=("${DEFAULT_CONFIGS[@]}")
+    fi
+    
+    # Validate required arguments
+    if [ -z "$BACKUP_DISK_UUID" ] && [ "$ACTION" != "help" ]; then
+        echo "Error: --uuid argument is required."
+        show_help
+        exit 1
+    fi
+}
+
+mount_backup_drive() {
+    echo "=> Mounting backup drive with UUID $BACKUP_DISK_UUID to $BACKUP_MOUNT..."
+    if ! findmnt -M "$BACKUP_MOUNT" > /dev/null; then
+        sudo mkdir -p "$BACKUP_MOUNT"
+        if ! sudo mount -o compress=zstd "UUID=$BACKUP_DISK_UUID" "$BACKUP_MOUNT"; then
+            echo "Error: Failed to mount backup drive. Please check the UUID and connection."
+            exit 1
+        fi
+    else
+        echo "Backup drive is already mounted."
+    fi
+}
+
+unmount_backup_drive() {
+    echo "=> Unmounting backup drive..."
+    if findmnt -M "$BACKUP_MOUNT" > /dev/null; then
+        sudo umount "$BACKUP_MOUNT" && sudo rmdir "$BACKUP_MOUNT" 2>/dev/null
+        echo "Backup drive unmounted."
+    fi
+}
+
+list_snapshots_for_config() {
+    local config="$1"
+    local backup_path="$BACKUP_MOUNT/$config"
+    
+    echo ""
+    echo "Snapshots for config: $config"
+    echo "------------------------------------"
+    
+    if [ -d "$backup_path" ]; then
+        snapshots=("$backup_path"/*)
+        if [ ${#snapshots[@]} -eq 0 ]; then
+            echo "  No snapshots found"
+        else
+            for snap in "${snapshots[@]}"; do
+                if [ -d "$snap" ]; then
+                    snap_num=$(basename "$snap")
+                    creation_time=$(stat -c %y "$snap" 2>/dev/null | cut -d'.' -f1) || creation_time="Unknown"
+                    echo "  $snap_num    (Created: $creation_time)"
+                fi
+            done
+        fi
+    else
+        echo "  Error: Backup path does not exist: $backup_path"
+        return 1
+    fi
+    echo "------------------------------------"
+}
+
+mount_snapshot_for_config() {
+    local config="$1"
+    local snapshot_num="$2"
+    local backup_path="$BACKUP_MOUNT/$config/$snapshot_num"
+    local mount_point="$SNAPSHOT_MOUNT/$config"
+
+    echo "=> Preparing to mount $config snapshot #$snapshot_num..."
+    sudo mkdir -p "$mount_point"
+
+    # Unmount previous snapshot if mounted
+    if findmnt -M "$mount_point" > /dev/null; then
+        sudo umount "$mount_point"
+    fi
+
+    # Mount the specific snapshot as READ-ONLY
+    if sudo mount -o ro,subvol="$config/$snapshot_num" "UUID=$BACKUP_DISK_UUID" "$mount_point"; then
+        echo "✅ Success! $config snapshot $snapshot_num is now mounted at: $mount_point"
+        return 0
+    else
+        echo "❌ Error: Failed to mount $config snapshot $snapshot_num."
+        return 1
+    fi
+}
+
+unmount_snapshot_for_config() {
+    local config="$1"
+    local mount_point="$SNAPSHOT_MOUNT/$config"
+    
+    if findmnt -M "$mount_point" > /dev/null; then
+        sudo umount "$mount_point" && sudo rmdir "$mount_point" 2>/dev/null
+        echo "Unmounted $config snapshot."
+    fi
+}
+
+unmount_all_snapshots() {
+    echo "=> Unmounting all snapshots..."
+    for config in "${SNAPPER_CONFIGS[@]}"; do
+        unmount_snapshot_for_config "$config"
+    done
+    # Clean up base mount directory
+    sudo rmdir "$SNAPSHOT_MOUNT" 2>/dev/null || true
+}
+
+interactive_restore() {
+    echo "Available Snapper Configs on Backup Drive:"
+    echo "=========================================="
+    
+    for config in "${SNAPPER_CONFIGS[@]}"; do
+        list_snapshots_for_config "$config"
+    done
+
+    # Prompt user to choose a config and snapshot
+    read -rp "Enter the Snapper config name to restore from (e.g., home_Downloads): " chosen_config
+    
+    if [[ ! " ${SNAPPER_CONFIGS[@]} " =~ " ${chosen_config} " ]]; then
+        echo "Error: Config '$chosen_config' is not in the available list."
+        return 1
+    fi
+
+    read -rp "Enter the snapshot number for $chosen_config (e.g., 10): " chosen_snapshot
+
+    if [[ -z "$chosen_snapshot" ]]; then
+        echo "Error: No snapshot number entered."
+        return 1
+    fi
+
+    if [[ ! -d "$BACKUP_MOUNT/$chosen_config/$chosen_snapshot" ]]; then
+        echo "Error: Snapshot #$chosen_snapshot does not exist for config $chosen_config."
+        return 1
+    fi
+
+    if mount_snapshot_for_config "$chosen_config" "$chosen_snapshot"; then
+        local mount_point="$SNAPSHOT_MOUNT/$chosen_config"
+        echo ""
+        echo "=========================================="
+        echo "Restore Process for $chosen_config:"
+        echo "1. Snapshot is mounted READ-ONLY at: $mount_point"
+        echo "2. Browse and copy files from this location"
+        echo "3. Example: cp -a $mount_point/path/to/file /destination/"
+        echo ""
+        read -rp "Press [Enter] when finished to unmount the snapshot..."
+
+        unmount_snapshot_for_config "$chosen_config"
+        echo "✅ Restore of $chosen_config snapshot $chosen_snapshot complete."
+    fi
+}
+
+########################################
+# MAIN PROGRAM                         #
+########################################
+
+check_root
+parse_arguments "$@"
+
+case "$ACTION" in
+    list)
+        mount_backup_drive
+        for config in "${SNAPPER_CONFIGS[@]}"; do
+            list_snapshots_for_config "$config"
+        done
+        unmount_backup_drive
+        ;;
+    unmount)
+        mount_backup_drive
+        unmount_all_snapshots
+        unmount_backup_drive
+        ;;
+    interactive)
+        mount_backup_drive
+        interactive_restore
+        unmount_backup_drive
+        ;;
+esac
