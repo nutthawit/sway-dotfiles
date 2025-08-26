@@ -26,6 +26,7 @@ btrfs subvolume create .config/helix
 btrfs subvolume create .config/cosmic
 btrfs subvolume create .rustup
 btrfs subvolume create .cache
+btrfs subvolume create projects
 cd -
 ```
 
@@ -50,7 +51,8 @@ UUID=$BTRFS_UUID /home/tie/.config/helix           btrfs   subvol=/home/tie/.con
 UUID=$BTRFS_UUID /home/tie/.config/cosmic          btrfs   subvol=/home/tie/.config/cosmic,compress=zstd:1 0 0
 UUID=$BTRFS_UUID /home/tie/bin           btrfs   subvol=/home/tie/bin,compress=zstd:1 0 0
 UUID=$BTRFS_UUID /home/tie/.rustup       btrfs   subvol=/home/tie/.rustup,compress=zstd:1 0 0
-UUID=$BTRFS_UUID /home/tie/.cache       btrfs   subvol=/home/tie/.cache,compress=zstd:1 0 0
+UUID=$BTRFS_UUID /home/tie/.cache        btrfs   subvol=/home/tie/.cache,compress=zstd:1 0 0
+UUID=$BTRFS_UUID /home/tie/projects      btrfs   subvol=/home/tie/projects,compress=zstd:1 0 0
 EOF
 
 # re-mount
@@ -86,7 +88,6 @@ sudo cp ~/.sway-dotfiles/global-configs/snapper-config-root /etc/snapper/configs
 
 sudo snapper -c home create-config /home
 sudo snapper -c home set-config ALLOW_USERS=$USER SYNC_ACL=yes
-sudo snapper -c home set-config TIMELINE_CREATE=no
 
 sudo snapper -c home_ssh create-config /home/tie/.ssh
 sudo snapper -c home_ssh set-config ALLOW_USERS=$USER SYNC_ACL=yes
@@ -336,6 +337,7 @@ source ~/.bashrc
 Make some binary available called by sudo
 ```bash
 sudo ln -sv $HOME/.cargo/bin/hx /usr/local/bin/hx
+sudo ln -sv $HOME/.cargo/bin/bat /usr/local/bin/bat
 sudo ln -sv $HOME/bin/restore-snapshot /usr/local/bin/restore-snapshot
 ```
 
@@ -349,8 +351,8 @@ sudo dnf install -y libxkbcommon-devel systemd-devel dbus-devel pkgconf-pkg-conf
 git clone git@github.com:nutthawit/solarized-cosmic-setup.git ~/.config/cosmic
 
 # build
-git clone --recurse-submodules https://github.com/pop-os/cosmic-epoch ~/cosmic-epoch
-cd ~/cosmic-epoch
+git clone --recurse-submodules https://github.com/pop-os/cosmic-epoch ~/projects/cosmic-epoch
+cd ~/projects/cosmic-epoch
 sudo ln -s /usr/lib64/libclang.so.20.1 /usr/lib64/libclang.so
 just build
 
@@ -380,10 +382,10 @@ git clone git@github.com:nutthawit/solarized-cosmic-setup.git ~/.config/cosmic
 pkill cosmic-session
 ```
 
-## Clone my development repo
+## Clone my development repos
 ```bash
-git clone https://github.com/pop-os/libcosmic ~/libcosmic
-git clone git@github.com:nutthawit/rust-note.git ~/rust-note
+git clone https://github.com/pop-os/libcosmic ~/projects/libcosmic
+git clone git@github.com:nutthawit/rust-note.git ~/projects/rust-note
 ```
 
 ## Todo

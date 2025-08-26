@@ -1,6 +1,6 @@
 
 # subvolume to snapshot
-SUBVOLUME="/"
+SUBVOLUME="/home"
 
 # filesystem type
 FSTYPE="btrfs"
@@ -18,12 +18,12 @@ FREE_LIMIT="0.2"
 
 
 # users and groups allowed to work with config
-ALLOW_USERS="tie"
+ALLOW_USERS=""
 ALLOW_GROUPS=""
 
 # sync users and groups from ALLOW_USERS and ALLOW_GROUPS to .snapshots
 # directory
-SYNC_ACL="yes"
+SYNC_ACL="no"
 
 
 # start comparing pre- and post-snapshot in background after creating
