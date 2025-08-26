@@ -162,7 +162,7 @@ USB_UUID=$(blkid -s UUID -o value /dev/sdX)
 
 # append entry to /etc/fstab
 bash -c 'cat >> /etc/fstabb' << EOF
-UUID=$USB_UUID /mnt/snapper_external_backup			  btrfs	  defaults,compress=zstd,noatime 0 0
+UUID=$USB_UUID /mnt/snapper_external_backup			  btrfs	  defaults,compress=zstd,nofail 0 0
 EOF
 
 systemctl daemon-reload
@@ -362,7 +362,7 @@ sudo just install
 cd ~
 
 # enable greetd
-cp ~/.sway-dotfiles/global-configs/greetd-config.toml /etc/greetd/config.toml
+sudo cp ~/.sway-dotfiles/global-configs/greetd-config.toml /etc/greetd/config.toml
 sudo systemctl enable greetd.service
 
 # set default runlevel to graphic
@@ -380,6 +380,18 @@ sudo systemctl set-default graphical.target
 cd /etc/pam.d
 sudo ln -s greetd cosmic-greeter
 cd ~
+```
+
+2. If `journalctl -xb` show "Failed to resolve user 'cosmic-greeter': No such process"
+```bash
+# check user cosmic-greeter
+id cosmic-greeter
+
+# If no user are create try to test create by
+sudo systemd-sysusers --dry-run /usr/lib/sysusers.d/cosmic-greeter.conf
+
+# If no error, just create a user and reboot
+sudo systemd-sysusers /usr/lib/sysusers.d/cosmic-greeter.conf
 ```
 
 ## Clone my development repos
