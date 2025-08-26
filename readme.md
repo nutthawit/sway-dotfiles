@@ -1,5 +1,162 @@
 # Sway dotfile
 
+## Prepare btrfs subvolumes
+
+Create nested subvolumes under $HOME (run as normal user)
+```bash
+# run as normal user
+cd ~
+btrfs subvolume create .ssh
+btrfs subvolume create .mozilla
+btrfs subvolume create .cargo
+btrfs subvolume create Pictures
+btrfs subvolume create Downloads
+btrfs subvolume create Documents
+btrfs subvolume create Musics
+btrfs subvolume create Videos
+btrfs subvolume create helix
+btrfs subvolume create .fzf
+btrfs subvolume create .sway-dotfiles
+btrfs subvolume create bin
+mkdir ~/.config
+btrfs subvolume create .config/helix
+btrfs subvolume create .config/cosmic
+btrfs subvolume create .rustup
+btrfs subvolume create .cache
+cd -
+```
+
+Append entries to /etc/fstab (rus as root)
+```bash
+# run as root
+BTRFS_UUID=$(blkid -s UUID -o value /dev/nvme0n1p2)
+
+bash -c 'cat >> /etc/fstabb' << EOF
+UUID=$BTRFS_UUID /home/tie/.ssh          btrfs   subvol=/home/tie/.ssh,compress=zstd:1 0 0
+UUID=$BTRFS_UUID /home/tie/.mozilla      btrfs   subvol=/home/tie/.mozilla,compress=zstd:1 0 0
+UUID=$BTRFS_UUID /home/tie/.cargo        btrfs   subvol=/home/tie/.cargo,compress=zstd:1 0 0
+UUID=$BTRFS_UUID /home/tie/Pictures      btrfs   subvol=/home/tie/Pictures,compress=zstd:1 0 0
+UUID=$BTRFS_UUID /home/tie/Downloads     btrfs   subvol=/home/tie/Downloads,compress=zstd:1 0 0
+UUID=$BTRFS_UUID /home/tie/Documents     btrfs   subvol=/home/tie/Documents,compress=zstd:1 0 0
+UUID=$BTRFS_UUID /home/tie/Musics        btrfs   subvol=/home/tie/Musics,compress=zstd:1 0 0
+UUID=$BTRFS_UUID /home/tie/Videos        btrfs   subvol=/home/tie/Videos,compress=zstd:1 0 0
+UUID=$BTRFS_UUID /home/tie/helix         btrfs   subvol=/home/tie/helix,compress=zstd:1 0 0
+UUID=$BTRFS_UUID /home/tie/.fzf          btrfs   subvol=/home/tie/.fzf,compress=zstd:1 0 0
+UUID=$BTRFS_UUID /home/tie/.sway-dotfiles          btrfs   subvol=/home/tie/.sway-dotfiles,compress=zstd:1 0 0
+UUID=$BTRFS_UUID /home/tie/.config/helix           btrfs   subvol=/home/tie/.config/helix,compress=zstd:1 0 0
+UUID=$BTRFS_UUID /home/tie/.config/cosmic          btrfs   subvol=/home/tie/.config/cosmic,compress=zstd:1 0 0
+UUID=$BTRFS_UUID /home/tie/bin           btrfs   subvol=/home/tie/bin,compress=zstd:1 0 0
+UUID=$BTRFS_UUID /home/tie/.rustup       btrfs   subvol=/home/tie/.rustup,compress=zstd:1 0 0
+UUID=$BTRFS_UUID /home/tie/.cache       btrfs   subvol=/home/tie/.cache,compress=zstd:1 0 0
+EOF
+
+# re-mount
+systemctl daemon-reload
+mount -a
+mount
+
+# veirfy by
+# lsblk
+```
+
+Setup Snapper
+```bash
+# install necessary packages
+sudo dnf dnf install snapper libdnf5-plugin-actions inotify-tools
+
+# integrate snapper with dnf
+sudo bash -c "cat > /etc/dnf/libdnf5-plugins/actions.d/snapper.actions" <<'EOF'
+# Get snapshot description
+pre_transaction::::/usr/bin/sh -c echo\ "tmp.cmd=$(ps\ -o\ command\ --no-headers\ -p\ '${pid}')"
+
+# Creates pre snapshot before the transaction and stores the snapshot number in the "tmp.snapper_pre_number"  variable.
+pre_transaction::::/usr/bin/sh -c echo\ "tmp.snapper_pre_number=$(snapper\ create\ -t\ pre\ -c\ number\ -p\ -d\ '${tmp.cmd}')"
+
+# If the variable "tmp.snapper_pre_number" exists, it creates post snapshot after the transaction and removes the variable "tmp.snapper_pre_number".
+post_transaction::::/usr/bin/sh -c [\ -n\ "${tmp.snapper_pre_number}"\ ]\ &&\ snapper\ create\ -t\ post\ --pre-number\ "${tmp.snapper_pre_number}"\ -c\ number\ -d\ "${tmp.cmd}"\ ;\ echo\ tmp.snapper_pre_number\ ;\ echo\ tmp.cmd
+EOF
+
+# create snapper configs
+sudo snapper -c root create-config /
+sudo snapper -c root set-config ALLOW_USERS=$USER SYNC_ACL=yes
+sudo cp ~/.sway-dotfiles/snapper-config-root /etc/snapper/configs/root
+
+sudo snapper -c home create-config /home
+sudo snapper -c home set-config ALLOW_USERS=$USER SYNC_ACL=yes
+sudo snapper -c home set-config TIMELINE_CREATE=no
+
+sudo snapper -c home_ssh create-config /home/tie/.ssh
+sudo snapper -c home_ssh set-config ALLOW_USERS=$USER SYNC_ACL=yes
+sudo snapper -c home_ssh set-config TIMELINE_CREATE=no
+
+sudo snapper -c home_mozilla create-config /home/tie/.mozilla
+sudo snapper -c home_mozilla set-config ALLOW_USERS=$USER SYNC_ACL=yes
+sudo snapper -c home_mozilla set-config TIMELINE_CREATE=no
+
+sudo snapper -c home_Pictures create-config /home/tie/Pictures
+sudo snapper -c home_Pictures set-config ALLOW_USERS=$USER SYNC_ACL=yes
+sudo snapper -c home_Pictures set-config TIMELINE_CREATE=no
+
+sudo snapper -c home_mozilla create-config /home/tie/.mozilla
+sudo snapper -c home_mozilla set-config ALLOW_USERS=$USER SYNC_ACL=yes
+sudo snapper -c home_mozilla set-config TIMELINE_CREATE=no
+
+sudo snapper -c home_mozilla create-config /home/tie/.mozilla
+sudo snapper -c home_mozilla set-config ALLOW_USERS=$USER SYNC_ACL=yes
+sudo snapper -c home_mozilla set-config TIMELINE_CREATE=no
+```
+
+Allow grub to detect and list snapshots in the boot menu
+```bash
+cd ~
+git clone https://github.com/Antynea/grub-btrfs
+cd grub-btrfs
+
+sed -i.bkp \
+  -e '/^#GRUB_BTRFS_SNAPSHOT_KERNEL_PARAMETERS=/a \
+GRUB_BTRFS_SNAPSHOT_KERNEL_PARAMETERS="rd.live.overlay.overlayfs=1"' \
+  -e '/^#GRUB_BTRFS_GRUB_DIRNAME=/a \
+GRUB_BTRFS_GRUB_DIRNAME="/boot/grub2"' \
+  -e '/^#GRUB_BTRFS_MKCONFIG=/a \
+GRUB_BTRFS_MKCONFIG=/usr/bin/grub2-mkconfig' \
+  -e '/^#GRUB_BTRFS_SCRIPT_CHECK=/a \
+GRUB_BTRFS_SCRIPT_CHECK=grub2-script-check' \
+  config
+
+sudo make install
+sudo systemctl enable --now grub-btrfsd.service
+cd ..
+rm -rf grub-btrfs
+cd ~/.sway-dotfiles
+```
+
+Enable automatic timeline snapshots
+```bash
+sudo systemctl enable --now snapper-timeline.timer
+sudo systemctl enable --now snapper-cleanup.timer
+```
+
+Prepare /mnt for external snapper backup (run as root)
+```bash
+# run as root
+mkdir /mnt/{old_snapshots,snapper_external_backup}
+
+#############################################
+# Attach the USB for use as external backup #
+#############################################
+
+# get USB uuid
+USB_UUID=$(blkid -s UUID -o value /dev/sdX)
+
+# append entry to /etc/fstab
+bash -c 'cat >> /etc/fstabb' << EOF
+UUID=$USB_UUID /mnt/snapper_external_backup			  btrfs	  defaults,compress=zstd,noatime 0 0
+EOF
+
+systemctl daemon-reload
+mount -a
+```
+
 ## Prerequisite
 
 Paste global-bashrc file in /etc/bashrc
@@ -8,6 +165,8 @@ sudo mv /etc/bashrc /etc/bashrc.orig
 sudo cp ~/.sway-dotfiles/global-bashrc /etc/bashrc
 
 source /etc/bashrc
+
+
 ```
 
 Enable rpmfusion
@@ -69,11 +228,6 @@ Backup user bashrc
 mv ~/.bashrc ~/.bashrc.orig
 ```
 
-Create .cargo dir
-```bash
-mkdir ~/.cargo
-```
-
 Install cargo 
 ```bash
 sudo dnf install -y mold
@@ -118,13 +272,11 @@ source ~/.bashrc
 ## Install required packages for snapper
 
 ```bash
-sudo dnf install -y \
-snapper \
-ps_mem \
-libdnf5-plugin-actions \
-btrfs-assistant \
-inotify-tools
-sudo dnf copr enable peoinas/snap-sync && sudo dnf install snap-sync -y
+sudo dnf install -y snapper ps_mem libdnf5-plugin-actions inotify-tools
+# sudo dnf copr enable peoinas/snap-sync && sudo dnf install snap-sync -y
+
+# Optional btrfs-assistant of GUI manage btrfs (not work on cosmic-desktop)
+dnf install btrfs-assistant -y
 ```
 
 > How to create snapshot [see](https://sysguides.com/install-fedora-42-with-snapshot-and-rollback-support#3-postinstallation-configuration).
