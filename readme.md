@@ -276,6 +276,14 @@ source ~/.bashrc
 # hx --health rust
 ```
 
+Set language server for bash
+```bash
+sudo dnf install -y nodejs-bash-language-server
+
+# verify by
+# hx --health bash
+```
+
 ## Setup my development environment
 
 Install fzf
