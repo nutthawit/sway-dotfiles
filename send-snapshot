@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# Configuration
+SNAPPER_CONFIG=$1 # Your snapper config name
+SUBVOLUME_PATH=$(snapper list-configs | grep $1 | awk '{print $3}') # Path to subvolume 
+SOURCE_SNAPSHOT_PATH="$SUBVOLUME_PATH/.snapshots" # Path to .snapshots
+TARGET_MOUNT="/mnt/snapper_external_backup"
+TARGET_PATH="$TARGET_MOUNT/$SNAPPER_CONFIG"
+
+# Check if target is mounted
+if ! mountpoint -q "$TARGET_MOUNT"; then
+    echo "Error: Target $TARGET_MOUNT is not mounted."
+    exit 1
+fi
+
+# Get the latest snapshot number on the SOURCE
+LATEST_SNAPSHOT_NUM=$(snapper -c "$SNAPPER_CONFIG" list | tail -1 | awk '{print $1}')
+LATEST_SNAPSHOT="$SOURCE_SNAPSHOT_PATH/$LATEST_SNAPSHOT_NUM/snapshot"
+
+# Get the latest snapshot number on the TARGET
+LAST_BACKUP_NUM=$(ls -1 "$TARGET_PATH" | sort -n | tail -1) 2>/dev/null
+
+if [ -z "$LAST_BACKUP_NUM" ]; then
+    echo "No existing backup found. Performing initial send..."
+    sudo btrfs send "$LATEST_SNAPSHOT" | sudo btrfs receive "$TARGET_PATH"
+    sudo mv "$TARGET_PATH/snapshot" "$TARGET_PATH/$LATEST_SNAPSHOT_NUM"
+    echo "Initial backup of snapshot $LATEST_SNAPSHOT_NUM complete."
+else
+    echo "Last backup is snapshot $LAST_BACKUP_NUM. Performing incremental send..."
+    PARENT_SNAPSHOT="$SOURCE_SNAPSHOT_PATH/$LAST_BACKUP_NUM/snapshot"
+    sudo btrfs send -p "$PARENT_SNAPSHOT" "$LATEST_SNAPSHOT" | sudo btrfs receive "$TARGET_PATH"
+    sudo mv "$TARGET_PATH/snapshot" "$TARGET_PATH/$LATEST_SNAPSHOT_NUM"
+    echo "Incremental backup from $LAST_BACKUP_NUM to $LATEST_SNAPSHOT_NUM complete."
+fi
