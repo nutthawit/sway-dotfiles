@@ -357,9 +357,16 @@ sudo ln -s /usr/lib64/libclang.so.20.1 /usr/lib64/libclang.so
 just build
 
 # install to /usr
-sed -i 's|install rootdir="" prefix="/usr/local": build|install rootdir="" prefix="/usr": build|' justfile
+sed -i 's|install rootdir="" prefix="/usr/local": build|install rootdir="" prefix="/usr":|' justfile
 sudo just install
 cd ~
+
+# enable greetd
+cp ~/.sway-dotfiles/global-configs/greetd-config.toml /etc/greetd/config.toml
+sudo systemctl enable greetd.service
+
+# set default runlevel to graphic
+sudo systemctl set-default graphical.target
 ```
 
 > `greetd` is required when you need to run `just --no-deps install` to install on /usr/local, not just systemd-sysext
@@ -372,14 +379,7 @@ cd ~
 ```bash
 cd /etc/pam.d
 sudo ln -s greetd cosmic-greeter
-```
-
-2. Apply my cosmic style.
-
-```bash
-mv ~/.config/cosmic ~/.config/cosmic.orig
-git clone git@github.com:nutthawit/solarized-cosmic-setup.git ~/.config/cosmic
-pkill cosmic-session
+cd ~
 ```
 
 ## Clone my development repos
