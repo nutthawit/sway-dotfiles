@@ -79,7 +79,7 @@ EOF
 # create snapper configs
 sudo snapper -c root create-config /
 sudo snapper -c root set-config ALLOW_USERS=$USER SYNC_ACL=yes
-sudo cp ~/.sway-dotfiles/snapper-config-root /etc/snapper/configs/root
+sudo cp ~/.sway-dotfiles/global-configs/snapper-config-root /etc/snapper/configs/root
 
 sudo snapper -c home create-config /home
 sudo snapper -c home set-config ALLOW_USERS=$USER SYNC_ACL=yes
@@ -170,7 +170,7 @@ mount -a
 Paste global-bashrc file in /etc/bashrc
 ```bash
 sudo mv /etc/bashrc /etc/bashrc.orig
-sudo cp ~/.sway-dotfiles/global-bashrc /etc/bashrc
+sudo cp ~/.sway-dotfiles/global-configs/global-bashrc /etc/bashrc
 
 source /etc/bashrc
 ```
@@ -185,7 +185,7 @@ sudo dnf install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-releas
 <!-- ```bash -->
 <!-- sudo dnf install tlp tlp-rdw -y -->
 
-<!-- sudo cp tlp.conf /etc/tlp.conf -->
+<!-- sudo cp ~/.sway-dotfiles/global-configs/tlp.conf /etc/tlp.conf -->
 <!-- sudo systemctl enable tlp.service -->
 <!-- sudo systemctl mask systemd-rfkill.service systemd-rfkill.socket -->
 <!-- ``` -->
