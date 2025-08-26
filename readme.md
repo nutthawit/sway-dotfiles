@@ -330,6 +330,12 @@ source ~/.bashrc
 # super+shift+c
 ```
 
+Make some binary available called by sudo
+```bash
+sudo ln -sv $HOME/.cargo/bin/hx /usr/local/bin/hx
+sudo ln -sv $HOME/bin/restore-snapshot /usr/local/bin/restore-snapshot
+```
+
 ## Install required packages and build cosmic-epoch
 
 ```bash
