@@ -6,7 +6,10 @@ Create nested subvolumes under $HOME (run as normal user)
 ```bash
 # run as normal user
 cd ~
+mv .ssh .ssh-old
 btrfs subvolume create .ssh
+mv .ssh-old/* .ssh/
+rm -rf .ssh-old
 btrfs subvolume create .mozilla
 btrfs subvolume create .cargo
 btrfs subvolume create Pictures
