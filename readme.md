@@ -432,3 +432,4 @@ sudo systemd-sysusers /usr/lib/sysusers.d/cosmic-greeter.conf
 ## Todo
 
 1. After backup_usb is plugged execute service to auto backup root and home
+2. redesign and rewrite script send-snapshot and restore-snapshot to support step 1
