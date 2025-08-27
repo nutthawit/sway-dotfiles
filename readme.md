@@ -438,3 +438,4 @@ sudo systemd-sysusers /usr/lib/sysusers.d/cosmic-greeter.conf
 
 1. After backup_usb is plugged execute service to auto backup root and home
 2. redesign and rewrite script send-snapshot and restore-snapshot to support step 1
+3. Check upstream of rust-lldb package by looking in rpmfile
