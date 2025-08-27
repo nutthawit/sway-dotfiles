@@ -353,7 +353,7 @@ sudo ln -sv $HOME/bin/restore-snapshot /usr/local/bin/restore-snapshot
 
 ```bash
 # install dependencies
-sudo dnf install -y libxkbcommon-devel systemd-devel dbus-devel pkgconf-pkg-config libinput-devel libseat-devel libdisplay-info-devel mesa-libgbm-devel clang llvm-devel pam-devel gstreamer1-devel gstreamer1-plugins-base-devel pipewire-devel flatpak-devel greetd power-profiles-daemon google-noto-sans-thai-fonts glibc-langpack-thai
+sudo dnf install -y libxkbcommon-devel systemd-devel dbus-devel pkgconf-pkg-config libinput-devel libseat-devel libdisplay-info-devel mesa-libgbm-devel clang llvm-devel pam-devel gstreamer1-devel gstreamer1-plugins-base-devel pipewire-devel flatpak-devel greetd power-profiles-daemon google-noto-sans-thai-fonts glibc-langpack-th
 
 # clone setting
 git clone git@github.com:nutthawit/solarized-cosmic-setup.git ~/.config/cosmic
@@ -383,7 +383,33 @@ sudo systemctl set-default graphical.target
 
 ## Post install cosmic-epoch
 
-1. Fix authentication failure" when locking screen. [Readmore]("https://github.com/pop-os/cosmic-greeter/issues/126") [Solution]("https://github.com/pop-os/cosmic-greeter/issues/126#issuecomment-2351331240")
+1. Clone current development repositories
+```bash
+git clone https://github.com/pop-os/libcosmic ~/projects/libcosmic
+git clone git@github.com:nutthawit/rust-note.git ~/projects/rust-note
+```
+
+2. Restore snapshots from external USB
+```bash
+sudo restore-snapshot -u bff88dbf-0743-457e-91b8-c679909542c4 --snapper-configs home_mozilla
+sudo restore-snapshot -u bff88dbf-0743-457e-91b8-c679909542c4 --snapper-configs home_Documents
+sudo restore-snapshot -u bff88dbf-0743-457e-91b8-c679909542c4 --snapper-configs home_Pictures
+sudo restore-snapshot -u bff88dbf-0743-457e-91b8-c679909542c4 --snapper-configs home_Musics
+```
+
+## Troubleshooting
+
+Fix `Intel Corporation Dual Band Wi-Fi 6(802.11ax) AX201 160MHz 2x2 [Harrison Peak]` kernel driver wouldn't load [readmore](https://discussion.fedoraproject.org/t/missing-intel-r-wireless-wifi-driver-for-linux/147332/3)
+```bash
+# run as root
+dnf install -y iwlwifi-dvm-firmware iwlwifi-mvm-firmware
+modprobe -r iwlwifi
+modprobe iwlwifi
+dracut -f
+reboot
+```
+
+Fix authentication failure" when locking screen. [Readmore]("https://github.com/pop-os/cosmic-greeter/issues/126") [Solution]("https://github.com/pop-os/cosmic-greeter/issues/126#issuecomment-2351331240")
 
 ```bash
 cd /etc/pam.d
@@ -391,7 +417,7 @@ sudo ln -s greetd cosmic-greeter
 cd ~
 ```
 
-2. If `journalctl -xb` show "Failed to resolve user 'cosmic-greeter': No such process"
+If `journalctl -xb` show "Failed to resolve user 'cosmic-greeter': No such process"
 ```bash
 # check user cosmic-greeter
 id cosmic-greeter
@@ -403,12 +429,6 @@ sudo systemd-sysusers --dry-run /usr/lib/sysusers.d/cosmic-greeter.conf
 sudo systemd-sysusers /usr/lib/sysusers.d/cosmic-greeter.conf
 ```
 
-## Clone my development repos
-```bash
-git clone https://github.com/pop-os/libcosmic ~/projects/libcosmic
-git clone git@github.com:nutthawit/rust-note.git ~/projects/rust-note
-```
-
-## Troubleshooting
 ## Todo
 
+1. After backup_usb is plugged execute service to auto backup root and home
