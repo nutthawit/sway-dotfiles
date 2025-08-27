@@ -331,6 +331,11 @@ cargo install zoxide --quiet --locked
 sudo sed -i '/eval "$(zoxide init bash)"/s/^# *//' /etc/bashrc
 ```
 
+Build termusic
+```bash
+cargo install termusic --quiet --locked
+```
+
 Activate
 ```bash
 mv ~/.gitconfig ~/.gitconfig.orig
