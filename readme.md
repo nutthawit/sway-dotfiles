@@ -168,10 +168,10 @@ mkdir /mnt/{old_snapshots,snapper_external_backup}
 #############################################
 
 # get USB uuid
-USB_UUID=$(blkid -s UUID -o value /dev/sdX)
+USB_UUID=$(blkid -s UUID -o value /dev/sdXX)
 
 # append entry to /etc/fstab
-bash -c 'cat >> /etc/fstabb' << EOF
+bash -c 'cat >> /etc/fstab' << EOF
 UUID=$USB_UUID /mnt/snapper_external_backup			  btrfs	  defaults,compress=zstd,nofail 0 0
 EOF
 
@@ -179,7 +179,7 @@ systemctl daemon-reload
 mount -a
 ```
 
-## Prerequisite
+## Setup desktop environment
 
 Paste global-bashrc file in /etc/bashrc
 ```bash
