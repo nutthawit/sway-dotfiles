@@ -2,14 +2,26 @@
 
 ## Prepare btrfs subvolumes
 
-Create nested subvolumes under $HOME (run as normal user)
+Create nested subvolumes under $HOME (run as normal user) (total 17 subvolumes)
 ```bash
 # run as normal user
 cd ~
+
 mv .ssh .ssh-old
 btrfs subvolume create .ssh
-mv .ssh-old/* .ssh/
-rm -rf .ssh-old
+cp -ar .ssh-old/. .ssh/
+#rm -rf .ssh-old
+
+mv .sway-dotfiles .sway-dotfiles-old
+btrfs subvolume create .sway-dotfiles
+cp -ar .sway-dotfiles-old/. .sway-dotfiles/
+#rm -rf .sway-dotfiles-old
+
+mv .cache .cache-old
+btrfs subvolume create .cache
+cp -ar .cache-old/. .cache/
+#rm -rf cache-old
+
 btrfs subvolume create .mozilla
 btrfs subvolume create .cargo
 btrfs subvolume create Pictures
@@ -19,14 +31,13 @@ btrfs subvolume create Musics
 btrfs subvolume create Videos
 btrfs subvolume create helix
 btrfs subvolume create .fzf
-btrfs subvolume create .sway-dotfiles
 btrfs subvolume create bin
+btrfs subvolume create .rustup
+btrfs subvolume create projects
+
 mkdir ~/.config
 btrfs subvolume create .config/helix
 btrfs subvolume create .config/cosmic
-btrfs subvolume create .rustup
-btrfs subvolume create .cache
-btrfs subvolume create projects
 cd -
 ```
 
@@ -34,8 +45,7 @@ Append entries to /etc/fstab (rus as root)
 ```bash
 # run as root
 BTRFS_UUID=$(blkid -s UUID -o value /dev/nvme0n1p2)
-
-bash -c 'cat >> /etc/fstabb' << EOF
+bash -c 'cat >> /etc/fstab' << EOF
 UUID=$BTRFS_UUID /home/tie/.ssh          btrfs   subvol=/home/tie/.ssh,compress=zstd:1 0 0
 UUID=$BTRFS_UUID /home/tie/.mozilla      btrfs   subvol=/home/tie/.mozilla,compress=zstd:1 0 0
 UUID=$BTRFS_UUID /home/tie/.cargo        btrfs   subvol=/home/tie/.cargo,compress=zstd:1 0 0
@@ -67,7 +77,7 @@ mount
 Setup Snapper [ref](https://sysguides.com/install-fedora-42-with-snapshot-and-rollback-support#3-postinstallation-configuration).
 ```bash
 # install necessary packages
-sudo dnf dnf install snapper libdnf5-plugin-actions inotify-tools
+sudo dnf install snapper libdnf5-plugin-actions inotify-tools -y
 
 # integrate snapper with dnf
 sudo bash -c "cat > /etc/dnf/libdnf5-plugins/actions.d/snapper.actions" <<'EOF'
