@@ -179,7 +179,7 @@ systemctl daemon-reload
 mount -a
 ```
 
-## Setup desktop environment
+## Setup my development environment
 
 Paste global-bashrc file in /etc/bashrc
 ```bash
@@ -206,7 +206,7 @@ sudo dnf install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-releas
 
 Install utility packages 
 ```bash
-sudo dnf install -y android-file-transfer btop git keepassxc stow @c-development cmake just
+sudo dnf install -y android-file-transfer btop firefox git keepassxc stow @c-development cmake just
 sudo dnf copr enable atim/lazygit -y
 sudo dnf install -y lazygit
 
@@ -298,8 +298,6 @@ sudo dnf install -y nodejs-bash-language-server
 # hx --health bash
 ```
 
-## Setup my development environment
-
 Install fzf
 ```bash
 git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
@@ -355,7 +353,7 @@ sudo ln -sv $HOME/bin/restore-snapshot /usr/local/bin/restore-snapshot
 
 ```bash
 # install dependencies
-sudo dnf install -y libxkbcommon-devel systemd-devel dbus-devel pkgconf-pkg-config libinput-devel libseat-devel libdisplay-info-devel mesa-libgbm-devel clang llvm-devel pam-devel gstreamer1-devel gstreamer1-plugins-base-devel pipewire-devel flatpak-devel greetd power-profiles-daemon
+sudo dnf install -y libxkbcommon-devel systemd-devel dbus-devel pkgconf-pkg-config libinput-devel libseat-devel libdisplay-info-devel mesa-libgbm-devel clang llvm-devel pam-devel gstreamer1-devel gstreamer1-plugins-base-devel pipewire-devel flatpak-devel greetd power-profiles-daemon google-noto-sans-thai-fonts glibc-langpack-thai
 
 # clone setting
 git clone git@github.com:nutthawit/solarized-cosmic-setup.git ~/.config/cosmic
@@ -364,6 +362,7 @@ git clone git@github.com:nutthawit/solarized-cosmic-setup.git ~/.config/cosmic
 git clone --recurse-submodules https://github.com/pop-os/cosmic-epoch ~/projects/cosmic-epoch
 cd ~/projects/cosmic-epoch
 sudo ln -s /usr/lib64/libclang.so.20.1 /usr/lib64/libclang.so
+screen
 just build
 
 # install to /usr
@@ -381,6 +380,7 @@ sudo systemctl set-default graphical.target
 
 > `greetd` is required when you need to run `just --no-deps install` to install on /usr/local, not just systemd-sysext
 > `power-profiles-daemon`  is a Linux service that manages system power profiles, allowing users to switch between different power modes (e.g., Power Saver, Balanced, and Performance) to optimize battery life or performance. It is commonly used in GNOME-based systems (like Fedora, Ubuntu, and other distributions) as an alternative to older solutions like `tlp` or `cpufreqd`.
+> `google-noto-sans-thai-fonts` and `glibc-langpack-thai` for correct display thai font on application
 
 ## Post install cosmic-epoch
 
@@ -410,5 +410,6 @@ git clone https://github.com/pop-os/libcosmic ~/projects/libcosmic
 git clone git@github.com:nutthawit/rust-note.git ~/projects/rust-note
 ```
 
+## Trobleshooting
 ## Todo
 
