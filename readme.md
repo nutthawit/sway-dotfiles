@@ -397,6 +397,11 @@ sudo restore-snapshot -u bff88dbf-0743-457e-91b8-c679909542c4 --snapper-configs 
 sudo restore-snapshot -u bff88dbf-0743-457e-91b8-c679909542c4 --snapper-configs home_Musics
 ```
 
+3. Install rust debugger
+```bash
+sudo dnf install -y rust-lldb
+```
+
 ## Troubleshooting
 
 Fix `Intel Corporation Dual Band Wi-Fi 6(802.11ax) AX201 160MHz 2x2 [Harrison Peak]` kernel driver wouldn't load [readmore](https://discussion.fedoraproject.org/t/missing-intel-r-wireless-wifi-driver-for-linux/147332/3)
