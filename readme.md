@@ -362,8 +362,7 @@ git clone git@github.com:nutthawit/solarized-cosmic-setup.git ~/.config/cosmic
 git clone --recurse-submodules https://github.com/pop-os/cosmic-epoch ~/projects/cosmic-epoch
 cd ~/projects/cosmic-epoch
 sudo ln -s /usr/lib64/libclang.so.20.1 /usr/lib64/libclang.so
-screen
-just build
+just build > build.log 2>&1
 
 # install to /usr
 sed -i 's|install rootdir="" prefix="/usr/local": build|install rootdir="" prefix="/usr":|' justfile
@@ -410,6 +409,6 @@ git clone https://github.com/pop-os/libcosmic ~/projects/libcosmic
 git clone git@github.com:nutthawit/rust-note.git ~/projects/rust-note
 ```
 
-## Trobleshooting
+## Troubleshooting
 ## Todo
 
