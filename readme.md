@@ -439,8 +439,25 @@ sudo systemd-sysusers --dry-run /usr/lib/sysusers.d/cosmic-greeter.conf
 sudo systemd-sysusers /usr/lib/sysusers.d/cosmic-greeter.conf
 ```
 
+Fix sound couldn't detech device and show dummy output/input
+```bash
+# check
+journalctl -b | grep -i audio
+
+# if the audio problem is directly caused by a missing Sound Open Firmware (SOF) file for your Intel Alder Lake audio controller. The specific error message is: sof-audio-pci-intel-tgl 0000:00:1f.3: SOF firmware and/or topology file not found. 
+
+# Install the sof-firmware package
+sudo dnf install -y alsa-sof-firmware
+
+# Optional install the troubleshooting tools
+#sudo dnf install -y alsa-utils
+
+reboot
+```
+
 ## Todo
 
 1. After backup_usb is plugged execute service to auto backup root and home
 2. redesign and rewrite script send-snapshot and restore-snapshot to support step 1
 3. Check upstream of rust-lldb package by looking in rpmfile
+4. Test restore root snapshot to ID=34 and install only `alsa-sof-firmware`
