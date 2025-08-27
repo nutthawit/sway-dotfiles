@@ -385,8 +385,8 @@ sudo systemctl set-default graphical.target
 
 1. Clone current development repositories
 ```bash
-git clone https://github.com/pop-os/libcosmic ~/projects/libcosmic
 git clone git@github.com:nutthawit/rust-note.git ~/projects/rust-note
+git clone --recurse-submodules https://github.com/pop-os/libcosmic.git ~/projects/libcosmic
 ```
 
 2. Restore snapshots from external USB
