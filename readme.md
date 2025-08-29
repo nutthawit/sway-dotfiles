@@ -461,3 +461,4 @@ reboot
 2. redesign and rewrite script send-snapshot and restore-snapshot to support step 1
 3. Check upstream of rust-lldb package by looking in rpmfile
 4. Test restore root snapshot to ID=34 and install only `alsa-sof-firmware`
+5. 
