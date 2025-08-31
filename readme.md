@@ -333,7 +333,8 @@ sudo sed -i '/eval "$(zoxide init bash)"/s/^# *//' /etc/bashrc
 
 Build termusic
 ```bash
-cargo install termusic --quiet --locked
+sudo dnf install protobuf-compiler alsa-lib-devel -y
+cargo install termusic termusic-server --quiet --locked
 ```
 
 Activate
