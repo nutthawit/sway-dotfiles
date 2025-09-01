@@ -337,6 +337,12 @@ sudo dnf install protobuf-compiler alsa-lib-devel -y
 cargo install termusic termusic-server --quiet --locked
 ```
 
+Install virtualenvwrapper
+```bash
+sudo dnf install -y python3-pip
+pip install virtualenvwrapper
+```
+
 Activate
 ```bash
 mv ~/.gitconfig ~/.gitconfig.orig
@@ -406,6 +412,13 @@ sudo restore-snapshot -u bff88dbf-0743-457e-91b8-c679909542c4 --snapper-configs 
 3. Install rust debugger
 ```bash
 sudo dnf install -y rust-lldb
+```
+
+4. Create my virtualenv
+```bash
+mkvirtualenv kdtie
+workon kdtie
+deactive
 ```
 
 ## Troubleshooting

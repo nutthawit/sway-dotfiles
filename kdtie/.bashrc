@@ -64,6 +64,9 @@ alias lla='ls -la'
 # fzf
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
+# enable virtualenvwrapper
+. "$HOME/.local/bin/virtualenvwrapper.sh"
+
 eval "$(starship init bash)"
 eval "$(zoxide init bash)"
 eval "$(fzf --bash)"
