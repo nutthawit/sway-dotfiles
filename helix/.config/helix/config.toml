@@ -22,8 +22,8 @@ wrap-indicator = ""
 [editor.file-picker]
 hidden = false
 
-[editor.whitespace]
-render = "all"
+# [editor.whitespace]
+# render = "all"
 
 [editor.whitespace.characters]
 space = "·"
@@ -37,3 +37,4 @@ tabpad = "→" # Tabs will look like "→···" (depending on tab width)
 render = true
 character = "╎" # Some characters that work well: "▏", "┆", "┊", "⸽"
 skip-levels = 1
+
