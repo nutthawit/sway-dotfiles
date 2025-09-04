@@ -421,6 +421,14 @@ workon kdtie
 deactive
 ```
 
+5. Install python packages (yt-dlp, etc...)
+```bash
+workon kdtie
+pip install yt-dlp
+deactive
+```
+
+
 ## Troubleshooting
 
 Fix `Intel Corporation Dual Band Wi-Fi 6(802.11ax) AX201 160MHz 2x2 [Harrison Peak]` kernel driver wouldn't load [readmore](https://discussion.fedoraproject.org/t/missing-intel-r-wireless-wifi-driver-for-linux/147332/3)
