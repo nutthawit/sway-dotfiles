@@ -28,7 +28,8 @@ if [ -z "$LAST_BACKUP_NUM" ]; then
 else
     echo "Last backup is snapshot $LAST_BACKUP_NUM. Performing incremental send..."
     PARENT_SNAPSHOT="$SOURCE_SNAPSHOT_PATH/$LAST_BACKUP_NUM/snapshot"
-    sudo btrfs send -p "$PARENT_SNAPSHOT" "$LATEST_SNAPSHOT" | sudo btrfs receive "$TARGET_PATH"
+    # sudo btrfs send -p "$PARENT_SNAPSHOT" "$LATEST_SNAPSHOT" | sudo btrfs receive "$TARGET_PATH"
+    sudo btrfs send "$LATEST_SNAPSHOT" | sudo btrfs receive "$TARGET_PATH"
     sudo mv "$TARGET_PATH/snapshot" "$TARGET_PATH/$LATEST_SNAPSHOT_NUM"
     echo "Incremental backup from $LAST_BACKUP_NUM to $LATEST_SNAPSHOT_NUM complete."
 fi
