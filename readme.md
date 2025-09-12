@@ -298,6 +298,17 @@ sudo dnf install -y nodejs-bash-language-server
 # hx --health bash
 ```
 
+Set language server for C
+```bash
+sudo dnf install -y clang-devel bear
+
+# verify by
+# hx --health c
+```
+
+> clang-devel provide a `clangd`
+> bear is a tool that generates a compilation database for clang tooling.
+
 Install fzf
 ```bash
 git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf

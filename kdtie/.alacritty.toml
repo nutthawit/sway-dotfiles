@@ -10,4 +10,7 @@ shell = { program = "/bin/bash" }
 [cursor] 
 style = { shape = "Block", blinking = "On" }
 
+[font]
+size = 18
+
 
