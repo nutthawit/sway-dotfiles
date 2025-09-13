@@ -3,3 +3,7 @@
 
 [language-server.rust-analyzer.config.cargo]
 features = "all"
+
+[[language]]
+name = "python"
+language-servers = ["pylsp"]

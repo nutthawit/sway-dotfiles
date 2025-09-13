@@ -3,6 +3,7 @@ theme = "solarized_dark"
 
 [editor]
 line-number = "relative"
+trim-trailing-whitespace = true
 
 [editor.lsp]
 display-inlay-hints = true

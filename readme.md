@@ -27,7 +27,7 @@ btrfs subvolume create .cargo
 btrfs subvolume create Pictures
 btrfs subvolume create Downloads
 btrfs subvolume create Documents
-btrfs subvolume create Musics
+btrfs subvolume create Music
 btrfs subvolume create Videos
 btrfs subvolume create helix
 btrfs subvolume create .fzf
@@ -204,7 +204,7 @@ sudo dnf install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-releas
 <!-- sudo systemctl mask systemd-rfkill.service systemd-rfkill.socket -->
 <!-- ``` -->
 
-Install utility packages 
+Install utility packages
 ```bash
 sudo dnf install -y android-file-transfer btop firefox git keepassxc stow @c-development cmake just
 sudo dnf copr enable atim/lazygit -y
@@ -248,7 +248,7 @@ Backup user bashrc
 mv ~/.bashrc ~/.bashrc.orig
 ```
 
-Install cargo 
+Install cargo
 ```bash
 sudo dnf install -y mold
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --profile default --no-modify-path -y
@@ -309,6 +309,20 @@ sudo dnf install -y clang-devel bear
 > clang-devel provide a `clangd`
 > bear is a tool that generates a compilation database for clang tooling.
 
+Set language server for Python
+```bash
+sudo dnf install -y python3-pip
+pip install virtualenvwrapper
+source /home/tie/.virtualenvwrapper.sh
+mkvirtualenv kdtie
+
+# install python lsp
+pip install -U 'python-lsp-server[all]'
+
+# verify by
+# hx --health python
+```
+
 Install fzf
 ```bash
 git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
@@ -348,11 +362,7 @@ sudo dnf install protobuf-compiler alsa-lib-devel -y
 cargo install termusic termusic-server --quiet --locked
 ```
 
-Install virtualenvwrapper
-```bash
-sudo dnf install -y python3-pip
-pip install virtualenvwrapper
-```
+
 
 Activate
 ```bash
@@ -477,7 +487,7 @@ Fix sound couldn't detech device and show dummy output/input
 # check
 journalctl -b | grep -i audio
 
-# if the audio problem is directly caused by a missing Sound Open Firmware (SOF) file for your Intel Alder Lake audio controller. The specific error message is: sof-audio-pci-intel-tgl 0000:00:1f.3: SOF firmware and/or topology file not found. 
+# if the audio problem is directly caused by a missing Sound Open Firmware (SOF) file for your Intel Alder Lake audio controller. The specific error message is: sof-audio-pci-intel-tgl 0000:00:1f.3: SOF firmware and/or topology file not found.
 
 # Install the sof-firmware package
 sudo dnf install -y alsa-sof-firmware
@@ -494,4 +504,4 @@ reboot
 2. redesign and rewrite script send-snapshot and restore-snapshot to support step 1
 3. Check upstream of rust-lldb package by looking in rpmfile
 4. Test restore root snapshot to ID=34 and install only `alsa-sof-firmware`
-5. 
+5.
