@@ -5,12 +5,12 @@ import = [
 ]
 
 [terminal]
-shell = { program = "/bin/bash" }
+shell = { program = "zellij" }
 
-[cursor] 
+[cursor]
 style = { shape = "Block", blinking = "On" }
 
 [font]
-size = 18
+size = 11
 
 
