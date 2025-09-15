@@ -28,16 +28,26 @@ unset rc
 alias gtree="git log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%C(bold blue) <%an> %Creset' --abbrev-commit"
 alias g3="git log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%C(bold blue) <%an> %Creset' --abbrev-commit"
 alias gt="git log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%C(bold blue) <%an> %Creset' --abbrev-commit"
-alias gst='git status'
-alias gss='git status'
-alias grt='git restore'
-alias grta='git reset'
-alias gcm='git commit -m'
-alias gcdm='git commit --amend'
+
+alias ginit='git init'
+
+alias gpull='git pull'
+alias gpl='git pull'
+alias gpush='git push'
 alias gph='git push'
-alias gpu='git pull'
-alias gdd='git diff'
+alias gpu='git push'
+
+alias gdiff='git diff'
+alias gdf='git diff'
+
+alias gss='git status'
 alias gadd='git add'
+alias gcm='git commit -m'
+alias gcme='git commit --amend'
+
+alias gre='git restore'
+alias grt='git reset'
+
 alias gb='git branch'
 alias gba='git branch -a'
 alias gck='git checkout'
@@ -45,10 +55,9 @@ alias gckb='git checkout -b'
 alias gch='git checkout'
 alias gchb='git checkout -b'
 alias gfa='git fetch --all'
-alias gdiff='git diff'
-alias gdf='git diff'
 alias grv='git remote -v'
 alias gra='git remote add'
+
 alias gc=git-crypt
 alias gg=lazygit
 
@@ -57,6 +66,7 @@ alias vi=hx
 alias la='ls -a'
 alias ll='ls -l'
 alias lla='ls -la'
+alias t=tree
 
 # PATH
 . "$HOME/.cargo/env"

@@ -33,9 +33,9 @@ alias ginit='git init'
 
 alias gpull='git pull'
 alias gpl='git pull'
-alias gpu='git pull'
 alias gpush='git push'
 alias gph='git push'
+alias gpu='git push'
 
 alias gdiff='git diff'
 alias gdf='git diff'
@@ -74,5 +74,3 @@ export GEMINI_API_KEY="AIzaSyA6rU9cBQeqvFKWtXIcFDxK5ah_ffdz9Ck"
 # PATH
 . "$HOME/.cargo/env"
 
-# Enable virtualenvwrapper
-. ~/.local/bin/virtualenvwrapper.sh
