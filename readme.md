@@ -57,6 +57,7 @@ mkdir ~/.config
 btrfs subvolume create .config/helix
 btrfs subvolume create .config/cosmic
 btrfs subvolume create .config/zellij
+btrfs subvolume create .config/alacirtty
 cd -
 
 # recheck contents of follow dir:
@@ -89,6 +90,7 @@ UUID=$BTRFS_UUID /home/tie/.dotfile      btrfs   subvol=/home/tie/.dotfile,compr
 UUID=$BTRFS_UUID /home/tie/.config/helix           btrfs   subvol=/home/tie/.config/helix,compress=zstd:1 0 0
 UUID=$BTRFS_UUID /home/tie/.config/cosmic          btrfs   subvol=/home/tie/.config/cosmic,compress=zstd:1 0 0
 UUID=$BTRFS_UUID /home/tie/.config/zellij          btrfs   subvol=/home/tie/.config/zellij,compress=zstd:1 0 0
+UUID=$BTRFS_UUID /home/tie/.config/alacritty       btrfs   subvol=/home/tie/.config/alacritty,compress=zstd:1 0 0
 UUID=$BTRFS_UUID /home/tie/bin           btrfs   subvol=/home/tie/bin,compress=zstd:1 0 0
 UUID=$BTRFS_UUID /home/tie/.rustup       btrfs   subvol=/home/tie/.rustup,compress=zstd:1 0 0
 UUID=$BTRFS_UUID /home/tie/.cache        btrfs   subvol=/home/tie/.cache,compress=zstd:1 0 0
@@ -215,7 +217,7 @@ sudo dnf install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-releas
 Install utility packages
 
 ```bash
-sudo dnf install -y android-file-transfer btop firefox git keepassxc stow gnome-tweak
+sudo dnf install -y android-file-transfer btop firefox git keepassxc stow gnome-tweaks
 sudo dnf copr enable atim/lazygit -y
 sudo dnf install -y lazygit
 
@@ -334,7 +336,7 @@ git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
 ~/.fzf/install --key-bindings --completion --no-update-rc
 ```
 
-Build alacritty (optional)
+Build alacritty
 
 ```bash
 sudo dnf install -y fontconfig-devel
@@ -379,7 +381,8 @@ cargo install termusic termusic-server --quiet --locked
 Build zellij
 
 ```bash
-cargo install zellij --quite --locked
+sudo dnf install -y perl-FindBin perl-IPC-Cmd perl-File-Compare
+cargo install zellij --quiet --locked
 ```
 
 Activate the desk
