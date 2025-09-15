@@ -1,6 +1,8 @@
-# Sway dotfile
+# dotfile
 
-## Create $HOME subvolumes
+> gnome-settings.dconf only support for GNOME 48!
+
+## Create subvolumes
 
 Create nested subvolumes under $HOME (run as normal user) (total 17 subvolumes)
 
@@ -12,21 +14,31 @@ mv .ssh .ssh-old
 btrfs subvolume create .ssh
 cp -ar .ssh-old/. .ssh/
 
-mv .sway-dotfiles .sway-dotfiles-old
-btrfs subvolume create .sway-dotfiles
-cp -ar .sway-dotfiles-old/. .sway-dotfiles/
+mv .dotfile .dotfile-old
+btrfs subvolume create .dotfile
+cp -ar .dotfile-old/. .dotfile/
 
 mv .cache .cache-old
 btrfs subvolume create .cache
 cp -ar .cache-old/. .cache/
 
+mv .Pictures .Pictures-old
+btrfs subvolume create Pictures
+
+mv .Downloads .Downloads-old
+btrfs subvolume create Downloads
+
+mv .Documets .Documents-old
+btrfs subvolume create Documents
+
+mv .Music .Music-old
+btrfs subvolume create Music
+
+mv .Videos .Videos-old
+btrfs subvolume create Videos
+
 btrfs subvolume create .mozilla
 btrfs subvolume create .cargo
-btrfs subvolume create Pictures
-btrfs subvolume create Downloads
-btrfs subvolume create Documents
-btrfs subvolume create Music
-btrfs subvolume create Videos
 btrfs subvolume create helix
 btrfs subvolume create .fzf
 btrfs subvolume create bin
@@ -46,6 +58,7 @@ ll ~/.cache
 
 # delete the backup
 rm -rf ~/.ssh-old ~/.dotfile-old ~/.cache-old
+rm -rf ~/Pictures-old ~/Music-old ~/Downloads-old ~/Documents-old
 ```
 
 Append entries to /etc/fstab (rus as root)
@@ -64,7 +77,7 @@ UUID=$BTRFS_UUID /home/tie/Music         btrfs   subvol=/home/tie/Music,compress
 UUID=$BTRFS_UUID /home/tie/Videos        btrfs   subvol=/home/tie/Videos,compress=zstd:1 0 0
 UUID=$BTRFS_UUID /home/tie/helix         btrfs   subvol=/home/tie/helix,compress=zstd:1 0 0
 UUID=$BTRFS_UUID /home/tie/.fzf          btrfs   subvol=/home/tie/.fzf,compress=zstd:1 0 0
-UUID=$BTRFS_UUID /home/tie/.sway-dotfiles          btrfs   subvol=/home/tie/.sway-dotfiles,compress=zstd:1 0 0
+UUID=$BTRFS_UUID /home/tie/.dotfile      btrfs   subvol=/home/tie/.dotfile,compress=zstd:1 0 0
 UUID=$BTRFS_UUID /home/tie/.config/helix           btrfs   subvol=/home/tie/.config/helix,compress=zstd:1 0 0
 UUID=$BTRFS_UUID /home/tie/.config/cosmic          btrfs   subvol=/home/tie/.config/cosmic,compress=zstd:1 0 0
 UUID=$BTRFS_UUID /home/tie/.config/zellij          btrfs   subvol=/home/tie/.config/zellij,compress=zstd:1 0 0
@@ -106,26 +119,24 @@ EOF
 # create snapper configs
 sudo snapper -c root create-config /
 sudo snapper -c root set-config ALLOW_USERS=$USER SYNC_ACL=yes
-sudo cp ~/.sway-dotfiles/global-configs/snapper-config-root /etc/snapper/configs/root
+sudo cp ~/.dotfile/global-configs/snapper-config-root /etc/snapper/configs/root
 
 sudo snapper -c home create-config /home
 sudo snapper -c home set-config ALLOW_USERS=$USER SYNC_ACL=yes
+
+sudo snapper -c home_mozilla create-config /home/tie/.mozilla
+sudo snapper -c home_mozilla set-config ALLOW_USERS=$USER SYNC_ACL=yes
+
+sudo snapper -c home_Documents create-config /home/tie/Documents
+sudo snapper -c home_Documents set-config ALLOW_USERS=$USER SYNC_ACL=yes
 
 sudo snapper -c home_ssh create-config /home/tie/.ssh
 sudo snapper -c home_ssh set-config ALLOW_USERS=$USER SYNC_ACL=yes
 sudo snapper -c home_ssh set-config TIMELINE_CREATE=no
 
-sudo snapper -c home_mozilla create-config /home/tie/.mozilla
-sudo snapper -c home_mozilla set-config ALLOW_USERS=$USER SYNC_ACL=yes
-sudo snapper -c home_mozilla set-config TIMELINE_CREATE=no
-
 sudo snapper -c home_Pictures create-config /home/tie/Pictures
 sudo snapper -c home_Pictures set-config ALLOW_USERS=$USER SYNC_ACL=yes
 sudo snapper -c home_Pictures set-config TIMELINE_CREATE=no
-
-sudo snapper -c home_Documents create-config /home/tie/Documents
-sudo snapper -c home_Documents set-config ALLOW_USERS=$USER SYNC_ACL=yes
-sudo snapper -c home_Documents set-config TIMELINE_CREATE=no
 
 sudo snapper -c home_Downloads create-config /home/tie/Downloads
 sudo snapper -c home_Downloads set-config ALLOW_USERS=$USER SYNC_ACL=yes
@@ -172,28 +183,6 @@ sudo systemctl enable --now snapper-timeline.timer
 sudo systemctl enable --now snapper-cleanup.timer
 ```
 
-<!-- Prepare /mnt for external snapper backup (run as root) -->
-
-<!-- ```bash -->
-<!-- # run as root -->
-<!-- mkdir /mnt/{old_snapshots,snapper_external_backup} -->
-
-<!-- ############################################# -->
-<!-- # Attach the USB for use as external backup # -->
-<!-- ############################################# -->
-
-<!-- # get USB uuid -->
-<!-- USB_UUID=$(blkid -s UUID -o value /dev/sdXX) -->
-
-<!-- # append entry to /etc/fstab -->
-<!-- bash -c 'cat >> /etc/fstab' << EOF -->
-<!-- UUID=$USB_UUID /mnt/snapper_external_backup			  btrfs	  defaults,compress=zstd,nofail 0 0 -->
-<!-- EOF -->
-
-<!-- systemctl daemon-reload -->
-<!-- mount -a -->
-<!-- ``` -->
-
 ## Setup my desk
 
 Paste global-bashrc file in /etc/bashrc
@@ -205,55 +194,34 @@ sudo cp ~/.sway-dotfiles/global-configs/global-bashrc /etc/bashrc
 source /etc/bashrc
 ```
 
-Enable rpmfusion
+Enable rpmfusion (optional)
 
 ```bash
 sudo dnf install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
+
+# verify by:
+# dnf repo list
 ```
 
-<!-- Optional for swayWM -->
-<!-- Install tlp for manage battery -->
-<!-- ```bash -->
-<!-- sudo dnf install tlp tlp-rdw -y -->
-
-<!-- sudo cp ~/.sway-dotfiles/global-configs/tlp.conf /etc/tlp.conf -->
-<!-- sudo systemctl enable tlp.service -->
-<!-- sudo systemctl mask systemd-rfkill.service systemd-rfkill.socket -->
-<!-- ``` -->
-
 Install utility packages
+
 ```bash
-sudo dnf install -y android-file-transfer btop firefox git keepassxc stow @c-development cmake just
+sudo dnf install -y android-file-transfer btop firefox git keepassxc stow
 sudo dnf copr enable atim/lazygit -y
 sudo dnf install -y lazygit
 
-# Optional for swayWM
-# sudo dnf install wdisplays -y
-```
+# c development setup
+sudo dnf install -y @c-development cmake meson
 
-> `wdisplays` allow precise adjustment of display settings via gui, and you can copy these settings to `~/.config/sway/config` for permanent.
-
-Paste default config for *foot* and *sway*
-
-```bash
-# Optional for swayWM
-# stow -v default
-
-# restart sway by press key
-# super+shift+c
-
-# reopen terminal
-```
-
-Create user systemd dir
-
-```bash
-mkdir -p ~/.config/systemd/user
+# rust development setup
+sudo dnf install -y just
 ```
 
 Install dropbox
 
 ```bash
+# Create user level systemd directory
+mkdir -p ~/.config/systemd/user
 wget https://www.dropbox.com/download?plat=lnx.x86_64 -O /tmp/dropbox.tar.gz
 tar -xf /tmp/dropbox.tar.gz -C $HOME
 
@@ -263,18 +231,13 @@ systemctl --user enable --now dropbox
 
 > If you have already 3 devices connected, you can't connect more devices, you must clear some device via the browser and the restart the dropbox.service.
 
-Backup user bashrc
-
-```bash
-mv ~/.bashrc ~/.bashrc.orig
-```
-
 Install cargo
 
 ```bash
 sudo dnf install -y mold
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --profile default --no-modify-path -y
 
+mv ~/.bashrc ~/.bashrc.orig
 stow -v cargo
 source ~/.bashrc
 ```
@@ -406,12 +369,9 @@ Activate the desk
 
 ```bash
 mv ~/.gitconfig ~/.gitconfig.orig
-stow -v --override=.bashrc --override=.config/sway/config kdtie
+stow -v --override=.bashrc kdtie
 source /etc/bashrc
 source ~/.bashrc
-
-# restart sway by press key
-# super+shift+c
 ```
 
 Make some binary available to called by sudo
@@ -422,7 +382,7 @@ sudo ln -sv $HOME/.cargo/bin/bat /usr/local/bin/bat
 # sudo ln -sv $HOME/bin/restore-snapshot /usr/local/bin/restore-snapshot
 ```
 
-## Build cosmic-epoch
+## Build cosmic-epoch (Require Retest)
 
 ```bash
 # install dependencies
@@ -437,7 +397,7 @@ cd ~/projects/cosmic-epoch
 sudo ln -s /usr/lib64/libclang.so.20.1 /usr/lib64/libclang.so
 just build > build.log 2>&1
 
-# install to /usr
+# install to /usr !!no real install!!
 sed -i 's|install rootdir="" prefix="/usr/local": build|install rootdir="" prefix="/usr":|' justfile
 sudo just install
 cd ~
@@ -457,6 +417,7 @@ sudo systemctl set-default graphical.target
 ## Post install cosmic-epoch
 
 1. Clone current development repositories
+
 ```bash
 git clone git@github.com:nutthawit/rust-note.git ~/projects/rust-note
 git clone git@github.com:nutthawit/c-note.git ~/projects/c-note
@@ -465,6 +426,7 @@ git clone --recurse-submodules https://github.com/pop-os/libcosmic.git ~/project
 ```
 
 2. Restore snapshots from external USB
+
 ```bash
 sudo restore-snapshot -u bff88dbf-0743-457e-91b8-c679909542c4 --snapper-configs home_mozilla
 sudo restore-snapshot -u bff88dbf-0743-457e-91b8-c679909542c4 --snapper-configs home_Documents
@@ -473,18 +435,12 @@ sudo restore-snapshot -u bff88dbf-0743-457e-91b8-c679909542c4 --snapper-configs 
 ```
 
 3. Install rust debugger
+
 ```bash
 sudo dnf install -y rust-lldb
 ```
 
-4. Create my virtualenv
-```bash
-mkvirtualenv kdtie
-workon kdtie
-deactive
-```
-
-5. Install python packages (yt-dlp, etc...)
+4. Install python packages (yt-dlp, etc...)
 ```bash
 workon kdtie
 pip install yt-dlp

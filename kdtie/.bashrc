@@ -48,7 +48,7 @@ alias gfa='git fetch --all'
 alias gdiff='git diff'
 alias gdf='git diff'
 alias grv='git remote -v'
-alias gra='git remote add' 
+alias gra='git remote add'
 alias gc=git-crypt
 alias gg=lazygit
 
