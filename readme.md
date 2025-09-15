@@ -1,8 +1,9 @@
 # Sway dotfile
 
-## Prepare btrfs subvolumes
+## Create $HOME subvolumes
 
 Create nested subvolumes under $HOME (run as normal user) (total 17 subvolumes)
+
 ```bash
 # run as normal user
 cd ~
@@ -10,17 +11,14 @@ cd ~
 mv .ssh .ssh-old
 btrfs subvolume create .ssh
 cp -ar .ssh-old/. .ssh/
-#rm -rf .ssh-old
 
 mv .sway-dotfiles .sway-dotfiles-old
 btrfs subvolume create .sway-dotfiles
 cp -ar .sway-dotfiles-old/. .sway-dotfiles/
-#rm -rf .sway-dotfiles-old
 
 mv .cache .cache-old
 btrfs subvolume create .cache
 cp -ar .cache-old/. .cache/
-#rm -rf cache-old
 
 btrfs subvolume create .mozilla
 btrfs subvolume create .cargo
@@ -38,10 +36,20 @@ btrfs subvolume create projects
 mkdir ~/.config
 btrfs subvolume create .config/helix
 btrfs subvolume create .config/cosmic
+btrfs subvolume create .config/zellij
 cd -
+
+# recheck contents of follow dir:
+ll ~/.ssh
+ll ~/.dotfile
+ll ~/.cache
+
+# delete the backup
+rm -rf ~/.ssh-old ~/.dotfile-old ~/.cache-old
 ```
 
 Append entries to /etc/fstab (rus as root)
+
 ```bash
 # run as root
 BTRFS_UUID=$(blkid -s UUID -o value /dev/nvme0n1p2)
@@ -52,13 +60,14 @@ UUID=$BTRFS_UUID /home/tie/.cargo        btrfs   subvol=/home/tie/.cargo,compres
 UUID=$BTRFS_UUID /home/tie/Pictures      btrfs   subvol=/home/tie/Pictures,compress=zstd:1 0 0
 UUID=$BTRFS_UUID /home/tie/Downloads     btrfs   subvol=/home/tie/Downloads,compress=zstd:1 0 0
 UUID=$BTRFS_UUID /home/tie/Documents     btrfs   subvol=/home/tie/Documents,compress=zstd:1 0 0
-UUID=$BTRFS_UUID /home/tie/Musics        btrfs   subvol=/home/tie/Musics,compress=zstd:1 0 0
+UUID=$BTRFS_UUID /home/tie/Music         btrfs   subvol=/home/tie/Music,compress=zstd:1 0 0
 UUID=$BTRFS_UUID /home/tie/Videos        btrfs   subvol=/home/tie/Videos,compress=zstd:1 0 0
 UUID=$BTRFS_UUID /home/tie/helix         btrfs   subvol=/home/tie/helix,compress=zstd:1 0 0
 UUID=$BTRFS_UUID /home/tie/.fzf          btrfs   subvol=/home/tie/.fzf,compress=zstd:1 0 0
 UUID=$BTRFS_UUID /home/tie/.sway-dotfiles          btrfs   subvol=/home/tie/.sway-dotfiles,compress=zstd:1 0 0
 UUID=$BTRFS_UUID /home/tie/.config/helix           btrfs   subvol=/home/tie/.config/helix,compress=zstd:1 0 0
 UUID=$BTRFS_UUID /home/tie/.config/cosmic          btrfs   subvol=/home/tie/.config/cosmic,compress=zstd:1 0 0
+UUID=$BTRFS_UUID /home/tie/.config/zellij          btrfs   subvol=/home/tie/.config/zellij,compress=zstd:1 0 0
 UUID=$BTRFS_UUID /home/tie/bin           btrfs   subvol=/home/tie/bin,compress=zstd:1 0 0
 UUID=$BTRFS_UUID /home/tie/.rustup       btrfs   subvol=/home/tie/.rustup,compress=zstd:1 0 0
 UUID=$BTRFS_UUID /home/tie/.cache        btrfs   subvol=/home/tie/.cache,compress=zstd:1 0 0
@@ -74,10 +83,13 @@ mount
 # lsblk
 ```
 
-Setup Snapper [ref](https://sysguides.com/install-fedora-42-with-snapshot-and-rollback-support#3-postinstallation-configuration).
+Setup Snapper
+
+[see more on the reference](https://sysguides.com/install-fedora-42-with-snapshot-and-rollback-support#3-postinstallation-configuration).
+
 ```bash
 # install necessary packages
-sudo dnf install snapper libdnf5-plugin-actions inotify-tools -y
+sudo dnf install -y snapper libdnf5-plugin-actions inotify-tools btrfs-assistant
 
 # integrate snapper with dnf
 sudo bash -c "cat > /etc/dnf/libdnf5-plugins/actions.d/snapper.actions" <<'EOF'
@@ -119,16 +131,17 @@ sudo snapper -c home_Downloads create-config /home/tie/Downloads
 sudo snapper -c home_Downloads set-config ALLOW_USERS=$USER SYNC_ACL=yes
 sudo snapper -c home_Downloads set-config TIMELINE_CREATE=no
 
-sudo snapper -c home_Musics create-config /home/tie/Musics
-sudo snapper -c home_Musics set-config ALLOW_USERS=$USER SYNC_ACL=yes
-sudo snapper -c home_Musics set-config TIMELINE_CREATE=no
+sudo snapper -c home_Music create-config /home/tie/Music
+sudo snapper -c home_Music set-config ALLOW_USERS=$USER SYNC_ACL=yes
+sudo snapper -c home_Music set-config TIMELINE_CREATE=no
 
 sudo snapper -c home_Videos create-config /home/tie/Videos
 sudo snapper -c home_Videos set-config ALLOW_USERS=$USER SYNC_ACL=yes
 sudo snapper -c home_Videos set-config TIMELINE_CREATE=no
 ```
 
-Allow grub to detect and list snapshots in the boot menu
+Allow GRUB to detect and list snapshots in the boot menu
+
 ```bash
 cd ~
 git clone https://github.com/Antynea/grub-btrfs
@@ -153,35 +166,38 @@ cd ~/.sway-dotfiles
 ```
 
 Enable automatic timeline snapshots
+
 ```bash
 sudo systemctl enable --now snapper-timeline.timer
 sudo systemctl enable --now snapper-cleanup.timer
 ```
 
-Prepare /mnt for external snapper backup (run as root)
-```bash
-# run as root
-mkdir /mnt/{old_snapshots,snapper_external_backup}
+<!-- Prepare /mnt for external snapper backup (run as root) -->
 
-#############################################
-# Attach the USB for use as external backup #
-#############################################
+<!-- ```bash -->
+<!-- # run as root -->
+<!-- mkdir /mnt/{old_snapshots,snapper_external_backup} -->
 
-# get USB uuid
-USB_UUID=$(blkid -s UUID -o value /dev/sdXX)
+<!-- ############################################# -->
+<!-- # Attach the USB for use as external backup # -->
+<!-- ############################################# -->
 
-# append entry to /etc/fstab
-bash -c 'cat >> /etc/fstab' << EOF
-UUID=$USB_UUID /mnt/snapper_external_backup			  btrfs	  defaults,compress=zstd,nofail 0 0
-EOF
+<!-- # get USB uuid -->
+<!-- USB_UUID=$(blkid -s UUID -o value /dev/sdXX) -->
 
-systemctl daemon-reload
-mount -a
-```
+<!-- # append entry to /etc/fstab -->
+<!-- bash -c 'cat >> /etc/fstab' << EOF -->
+<!-- UUID=$USB_UUID /mnt/snapper_external_backup			  btrfs	  defaults,compress=zstd,nofail 0 0 -->
+<!-- EOF -->
 
-## Setup my development environment
+<!-- systemctl daemon-reload -->
+<!-- mount -a -->
+<!-- ``` -->
+
+## Setup my desk
 
 Paste global-bashrc file in /etc/bashrc
+
 ```bash
 sudo mv /etc/bashrc /etc/bashrc.orig
 sudo cp ~/.sway-dotfiles/global-configs/global-bashrc /etc/bashrc
@@ -190,6 +206,7 @@ source /etc/bashrc
 ```
 
 Enable rpmfusion
+
 ```bash
 sudo dnf install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
 ```
@@ -217,6 +234,7 @@ sudo dnf install -y lazygit
 > `wdisplays` allow precise adjustment of display settings via gui, and you can copy these settings to `~/.config/sway/config` for permanent.
 
 Paste default config for *foot* and *sway*
+
 ```bash
 # Optional for swayWM
 # stow -v default
@@ -228,11 +246,13 @@ Paste default config for *foot* and *sway*
 ```
 
 Create user systemd dir
+
 ```bash
 mkdir -p ~/.config/systemd/user
 ```
 
 Install dropbox
+
 ```bash
 wget https://www.dropbox.com/download?plat=lnx.x86_64 -O /tmp/dropbox.tar.gz
 tar -xf /tmp/dropbox.tar.gz -C $HOME
@@ -244,11 +264,13 @@ systemctl --user enable --now dropbox
 > If you have already 3 devices connected, you can't connect more devices, you must clear some device via the browser and the restart the dropbox.service.
 
 Backup user bashrc
+
 ```bash
 mv ~/.bashrc ~/.bashrc.orig
 ```
 
 Install cargo
+
 ```bash
 sudo dnf install -y mold
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --profile default --no-modify-path -y
@@ -260,12 +282,14 @@ source ~/.bashrc
 > `mold` is a faster drop-in replacement for existing Unix linkers, use to tell cargo to use did linker to build other rust crates.
 
 Build sccache
+
 ```bash
 sudo dnf install -y openssl-devel openssl
 RUSTC_WRAPPER= cargo install sccache --locked --quiet
 ```
 
 Build helix
+
 ```bash
 sudo dnf install -y lldb
 git clone https://github.com/helix-editor/helix ~/helix
@@ -276,6 +300,7 @@ mv -v ~/helix/runtime/* ~/.config/helix/runtime/
 ```
 
 Set language server for rust
+
 ```bash
 rustup component add rust-analyzer
 
@@ -291,6 +316,7 @@ source ~/.bashrc
 ```
 
 Set language server for bash
+
 ```bash
 sudo dnf install -y nodejs-bash-language-server
 
@@ -299,6 +325,7 @@ sudo dnf install -y nodejs-bash-language-server
 ```
 
 Set language server for C
+
 ```bash
 sudo dnf install -y clang-devel bear
 
@@ -310,6 +337,7 @@ sudo dnf install -y clang-devel bear
 > bear is a tool that generates a compilation database for clang tooling.
 
 Set language server for Python
+
 ```bash
 sudo dnf install -y python3-pip
 pip install virtualenvwrapper
@@ -324,12 +352,14 @@ pip install -U 'python-lsp-server[all]'
 ```
 
 Install fzf
+
 ```bash
 git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
 ~/.fzf/install --key-bindings --completion --no-update-rc
 ```
 
-Build alacritty
+Build alacritty (optional)
+
 ```bash
 sudo dnf install -y fontconfig-devel
 cargo install alacritty --quiet --locked
@@ -338,17 +368,20 @@ git clone https://github.com/alacritty/alacritty-theme ~/.config/alacritty/theme
 ```
 
 Build bat
+
 ```bash
 sudo dnf install -y oniguruma-devel
 RUSTONIG_SYSTEM_LIBONIG=1 cargo install bat --locked --quiet
 ```
 
 Build startship
+
 ```bash
 cargo install starship --quiet --locked
 ```
 
 Build zoxide
+
 ```bash
 cargo install zoxide --quiet --locked
 
@@ -356,15 +389,21 @@ cargo install zoxide --quiet --locked
 sudo sed -i '/eval "$(zoxide init bash)"/s/^# *//' /etc/bashrc
 ```
 
-Build termusic
+Build termusic (optional)
+
 ```bash
 sudo dnf install protobuf-compiler alsa-lib-devel -y
 cargo install termusic termusic-server --quiet --locked
 ```
 
+Build zellij
 
+```bash
+cargo install zellij --quite --locked
+```
 
-Activate
+Activate the desk
+
 ```bash
 mv ~/.gitconfig ~/.gitconfig.orig
 stow -v --override=.bashrc --override=.config/sway/config kdtie
@@ -375,14 +414,15 @@ source ~/.bashrc
 # super+shift+c
 ```
 
-Make some binary available called by sudo
+Make some binary available to called by sudo
+
 ```bash
 sudo ln -sv $HOME/.cargo/bin/hx /usr/local/bin/hx
 sudo ln -sv $HOME/.cargo/bin/bat /usr/local/bin/bat
-sudo ln -sv $HOME/bin/restore-snapshot /usr/local/bin/restore-snapshot
+# sudo ln -sv $HOME/bin/restore-snapshot /usr/local/bin/restore-snapshot
 ```
 
-## Install required packages and build cosmic-epoch
+## Build cosmic-epoch
 
 ```bash
 # install dependencies
@@ -419,6 +459,8 @@ sudo systemctl set-default graphical.target
 1. Clone current development repositories
 ```bash
 git clone git@github.com:nutthawit/rust-note.git ~/projects/rust-note
+git clone git@github.com:nutthawit/c-note.git ~/projects/c-note
+git clone git@github.com:nutthawit/python-note.git ~/project/python-note
 git clone --recurse-submodules https://github.com/pop-os/libcosmic.git ~/projects/libcosmic
 ```
 

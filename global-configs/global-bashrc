@@ -105,6 +105,5 @@ fi
 #    PATH="/home/tie/go/bin:$PATH"
 #fi
 
-
 export PATH
 #eval "$(zoxide init bash)"
