@@ -66,6 +66,7 @@ alias vi=hx
 alias la='ls -a'
 alias ll='ls -l'
 alias lla='ls -la'
+alias t=tree
 
 export HELIX_RUNTIME="~/.config/helix/runtime"
 export GEMINI_API_KEY="AIzaSyA6rU9cBQeqvFKWtXIcFDxK5ah_ffdz9Ck"
