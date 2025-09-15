@@ -215,7 +215,7 @@ sudo dnf install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-releas
 Install utility packages
 
 ```bash
-sudo dnf install -y android-file-transfer btop firefox git keepassxc stow
+sudo dnf install -y android-file-transfer btop firefox git keepassxc stow gnome-tweak
 sudo dnf copr enable atim/lazygit -y
 sudo dnf install -y lazygit
 
@@ -256,21 +256,24 @@ source ~/.bashrc
 Build sccache
 
 ```bash
-sudo dnf install -y gcc
-sudo dnf install -y openssl-devel openssl
+sudo dnf install -y openssl-devel openssal gcc
 RUSTC_WRAPPER= cargo install sccache --locked --quiet
 ```
+
+> gcc is require because build sccache need cc command
 
 Build helix
 
 ```bash
-sudo dnf install -y lldb
+sudo dnf install -y lldb gcc-c++
 git clone https://github.com/helix-editor/helix ~/helix
 mkdir -p ~/.config/helix/runtime
 export HELIX_RUNTIME=~/.config/helix/runtime
 cargo install --path ~/helix/helix-term --locked --quiet
-mv -v ~/helix/runtime/* ~/.config/helix/runtime/
+mv ~/helix/runtime/* ~/.config/helix/runtime/
 ```
+
+> gcc-c++ is require because build helix need c++ command
 
 Set language server for rust
 
@@ -313,9 +316,9 @@ Set language server for Python
 
 ```bash
 sudo dnf install -y python3-pip
-pip install virtualenvwrapper
-source /home/tie/.virtualenvwrapper.sh
-mkvirtualenv kdtie
+# pip install virtualenvwrapper
+# source /home/tie/.local/bin/virtualenvwrapper.sh
+# mkvirtualenv kdtie
 
 # install python lsp
 pip install -U 'python-lsp-server[all]'
@@ -338,6 +341,10 @@ sudo dnf install -y fontconfig-devel
 cargo install alacritty --quiet --locked
 mkdir -p ~/.config/alacritty/themes
 git clone https://github.com/alacritty/alacritty-theme ~/.config/alacritty/themes
+
+# create desktop icon
+sudo cp global-configs/alacritty.desktop /usr/share/applications/alacritty.desktop
+sudo cp global-configs/alacritty-term.svg /usr/share/applications/alacritty-term.svg
 ```
 
 Build bat
@@ -512,4 +519,4 @@ reboot
 2. redesign and rewrite script send-snapshot and restore-snapshot to support step 1
 3. Check upstream of rust-lldb package by looking in rpmfile
 4. Test restore root snapshot to ID=34 and install only `alsa-sof-firmware`
-5.
+5. Install Nerdfont for used in terminal https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/JetBrainsMono.zip
