@@ -22,22 +22,30 @@ mv .cache .cache-old
 btrfs subvolume create .cache
 cp -ar .cache-old/. .cache/
 
-mv .Pictures .Pictures-old
+mv Pictures Pictures-old
 btrfs subvolume create Pictures
+cp -ar Pictures-old/. Pictures/
 
-mv .Downloads .Downloads-old
+mv Downloads Downloads-old
 btrfs subvolume create Downloads
+cp -ar Downloads-old/. Downloads/
 
-mv .Documets .Documents-old
+mv Documents Documents-old
 btrfs subvolume create Documents
+cp -ar Documents-old/. Documents/
 
-mv .Music .Music-old
+mv Music Music-old
 btrfs subvolume create Music
+cp -ar Music-old/. Music/
 
-mv .Videos .Videos-old
+mv Videos Videos-old
 btrfs subvolume create Videos
+cp -ar Videos-old/. Videos/
 
+mv .mozilla .mozilla-old
 btrfs subvolume create .mozilla
+cp -ar .mozilla-old/. .mozilla
+
 btrfs subvolume create .cargo
 btrfs subvolume create helix
 btrfs subvolume create .fzf
@@ -169,11 +177,12 @@ GRUB_BTRFS_MKCONFIG=/usr/bin/grub2-mkconfig' \
 GRUB_BTRFS_SCRIPT_CHECK=grub2-script-check' \
   config
 
+sudo dnf install -y make
 sudo make install
 sudo systemctl enable --now grub-btrfsd.service
 cd ..
 rm -rf grub-btrfs
-cd ~/.sway-dotfiles
+cd ~/.dotfile
 ```
 
 Enable automatic timeline snapshots
@@ -189,7 +198,7 @@ Paste global-bashrc file in /etc/bashrc
 
 ```bash
 sudo mv /etc/bashrc /etc/bashrc.orig
-sudo cp ~/.sway-dotfiles/global-configs/global-bashrc /etc/bashrc
+sudo cp ~/.dotfile/global-configs/global-bashrc /etc/bashrc
 
 source /etc/bashrc
 ```
@@ -211,10 +220,10 @@ sudo dnf copr enable atim/lazygit -y
 sudo dnf install -y lazygit
 
 # c development setup
-sudo dnf install -y @c-development cmake meson
+# sudo dnf install -y @c-development cmake meson
 
 # rust development setup
-sudo dnf install -y just
+# sudo dnf install -y just
 ```
 
 Install dropbox
@@ -247,6 +256,7 @@ source ~/.bashrc
 Build sccache
 
 ```bash
+sudo dnf install -y gcc
 sudo dnf install -y openssl-devel openssl
 RUSTC_WRAPPER= cargo install sccache --locked --quiet
 ```
