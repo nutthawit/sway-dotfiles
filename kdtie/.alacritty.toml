@@ -12,5 +12,6 @@ style = { shape = "Block", blinking = "On" }
 
 [font]
 size = 11
+normal = { family = "BlexMonoNerdFont", style = "Regular" }
 
 

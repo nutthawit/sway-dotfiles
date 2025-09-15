@@ -347,6 +347,23 @@ git clone https://github.com/alacritty/alacritty-theme ~/.config/alacritty/theme
 # create desktop icon
 sudo cp global-configs/alacritty.desktop /usr/share/applications/alacritty.desktop
 sudo cp global-configs/alacritty-term.svg /usr/share/applications/alacritty-term.svg
+
+# install fonts
+mkdir /tmp/{ibm-font,jetbrain-font} ~/.local/share/fonts
+
+# install JetBrainsMono
+wget https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/JetBrainsMono.zip -O /tmp/jetbrain-font/JetBrainsMono.zip
+cd /tmp/jetbrain-font
+unzip -q JetBrainsMono.zip
+cp *.ttf ~/.local/share/fonts/
+
+# install IBMPlexMono
+wget https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/IBMPlexMono.zip -O /tmp/ibm-font/IBMPlexMono.zip
+cd /tmp/ibm-font
+unzip -q IBMPlexMono.zip
+cp *.ttf ~/.local/share/fonts/
+
+fc-cache -f
 ```
 
 Build bat
