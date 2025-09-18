@@ -133,16 +133,15 @@ sudo cp ~/.dotfile/global-configs/snapper-config-root /etc/snapper/configs/root
 
 sudo snapper -c home create-config /home
 sudo snapper -c home set-config ALLOW_USERS=$USER SYNC_ACL=yes
+sudo cp ~/.dotfile/global-configs/snapper-config-home /etc/snapper/configs/home
 
 sudo snapper -c home_mozilla create-config /home/tie/.mozilla
 sudo snapper -c home_mozilla set-config ALLOW_USERS=$USER SYNC_ACL=yes
+sudo cp ~/.dotfile/global-configs/snapper-config-home_mozilla /etc/snapper/configs/home_mozilla
 
 sudo snapper -c home_Documents create-config /home/tie/Documents
 sudo snapper -c home_Documents set-config ALLOW_USERS=$USER SYNC_ACL=yes
-
-sudo snapper -c home_ssh create-config /home/tie/.ssh
-sudo snapper -c home_ssh set-config ALLOW_USERS=$USER SYNC_ACL=yes
-sudo snapper -c home_ssh set-config TIMELINE_CREATE=no
+sudo cp ~/.dotfile/global-configs/snapper-config-home_Documents /etc/snapper/configs/home_Documents
 
 sudo snapper -c home_Pictures create-config /home/tie/Pictures
 sudo snapper -c home_Pictures set-config ALLOW_USERS=$USER SYNC_ACL=yes
@@ -159,6 +158,10 @@ sudo snapper -c home_Music set-config TIMELINE_CREATE=no
 sudo snapper -c home_Videos create-config /home/tie/Videos
 sudo snapper -c home_Videos set-config ALLOW_USERS=$USER SYNC_ACL=yes
 sudo snapper -c home_Videos set-config TIMELINE_CREATE=no
+
+sudo snapper -c home_ssh create-config /home/tie/.ssh
+sudo snapper -c home_ssh set-config ALLOW_USERS=$USER SYNC_ACL=yes
+sudo snapper -c home_ssh set-config TIMELINE_CREATE=no
 ```
 
 Allow GRUB to detect and list snapshots in the boot menu
@@ -217,7 +220,7 @@ sudo dnf install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-releas
 Install utility packages
 
 ```bash
-sudo dnf install -y android-file-transfer btop firefox git keepassxc stow gnome-tweaks
+sudo dnf install -y android-file-transfer btop firefox git keepassxc stow gnome-tweaks tmux
 sudo dnf copr enable atim/lazygit -y
 sudo dnf install -y lazygit
 

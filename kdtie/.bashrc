@@ -67,6 +67,7 @@ alias la='ls -a'
 alias ll='ls -l'
 alias lla='ls -la'
 alias t=tree
+alias tb=toolbox
 
 # PATH
 . "$HOME/.cargo/env"
@@ -77,6 +78,15 @@ alias t=tree
 # enable virtualenvwrapper
 . "$HOME/.local/bin/virtualenvwrapper.sh"
 
+# Fix tmux color
+export TERM="xterm-256color"
+
+# Auto start tmux.
+if command -v tmux &> /dev/null && [ -z "$TMUX" ]; then
+    tmux attach -t base || tmux new -s base
+fi
+
 eval "$(starship init bash)"
 eval "$(zoxide init bash)"
 eval "$(fzf --bash)"
+

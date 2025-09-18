@@ -6,7 +6,7 @@ import = [
 ]
 
 [terminal]
-shell = { program = "zellij" }
+shell = { program = "bash" }
 
 [cursor]
 style = { shape = "Block", blinking = "On" }
@@ -14,5 +14,12 @@ style = { shape = "Block", blinking = "On" }
 [font]
 size = 11
 normal = { family = "BlexMonoNerdFont", style = "Regular" }
+bold = { family = "BlexMonoNerdFont", style = "Bold" }
+italic = { family = "BlexMonoNerdFont", style = "Italic" }
+bold_italic = { family = "BlexMonoNerdFont", style = "BoldItalic" }
+
+[env]
+term = "xterm-256color"
+
 
 
