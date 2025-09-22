@@ -67,7 +67,12 @@ alias la='ls -a'
 alias ll='ls -l'
 alias lla='ls -la'
 alias t=tree
+alias ss=sudo
+alias tx=tmux
 alias tb=toolbox
+alias tbc='toolbox create'
+alias tbe='toolbox enter'
+alias tbec='toolbox enter cosmic'
 
 # PATH
 . "$HOME/.cargo/env"
